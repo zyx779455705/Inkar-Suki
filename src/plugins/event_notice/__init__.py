@@ -55,7 +55,7 @@ async def _(bot: Bot, event: NoticeEvent):
         if str(event.user_id) in Config.bot:
             await bot.call_api("set_group_leave", group_id = event.group_id)
             for i in Config.notice_to:
-                await bot.call_api("send_group_msg", group_id = int(i), message = f"唔……音卡在群聊（{str(event.group_id)}）检测到被禁言啦，已自动退群！\n操作者：{str(event.operator_id)}，已自动封禁！")
+                await bot.call_api("send_group_msg", group_id = int(i), message = f"唔……九幽在群聊（{str(event.group_id)}）检测到被禁言啦，已自动退群！\n操作者：{str(event.operator_id)}，已自动封禁！")
             kicker = str(event.operator_id)
             if banned(kicker) == False:
                 banlist = json.loads(read(TOOLS + "/ban.json"))
