@@ -68,7 +68,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     msg = await get_tieba(int(tid))
     await tieba.finish(msg)
 
-cheater_ = on_command("jx3_cheater", aliases={"-骗子", "-查人"}, priority=5)
+cheater_ = on_command("jx3_cheater", aliases={"检查", "查人"}, priority=5)
 
 
 @cheater_.handle()
