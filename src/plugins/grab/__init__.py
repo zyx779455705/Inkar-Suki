@@ -49,7 +49,7 @@ img_drink_path = Path(os.path.join(os.path.dirname(__file__), "drink_pic"))
 all_file_drink_name = os.listdir(str(img_drink_path))
 
 # 载入bot名字
-Bot_NICKNAME = "音卡"
+Bot_NICKNAME = "bot"
 
 TOOLS = nonebot.get_driver().config.tools_path
 sys.path.append(TOOLS)
@@ -87,7 +87,7 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
             basic_info = f"QQ等级：{level}\n登录天数：{login}\n昵称：{nickname}"
         data = await verify_cheater(str(content))
         if data == False:
-            msg = f"此人应该不是骗子？音卡在贴吧没有找到哦~\n{basic_info}"
+            msg = f"此人应该不是骗子？bot在贴吧没有找到哦~\n{basic_info}"
         else:
             url = data
             msg = f"此人可能是骗子？在贴吧已有记录！\n{url}\n{basic_info}\n仅供参考！请以实际内容为准！"

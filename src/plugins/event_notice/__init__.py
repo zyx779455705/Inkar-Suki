@@ -35,14 +35,14 @@ async def _(bot: Bot, event: NoticeEvent):
         group = event.group_id
         bots = Config.bot
         if str(obj) == bots[0]:
-            msg = "欢迎使用Inkar Suki！如需帮助请发送+help或查询文档哦~\nhttps://inkar-suki.codethink.cn\n若为初次使用，请申请人在本群发送+reg进行注册方可使用哦~"
+            msg = "欢迎使用bot！如需帮助请发送+help或查询文档哦~\nhttps://inkar-suki.codethink.cn\n若为初次使用，请申请人在本群发送+reg进行注册方可使用哦~"
         else:
             msg = ms.at(obj) + read(DATA + "/" + str(group) + "/welcome.txt")
         await bot.call_api("send_group_msg", group_id=group, message=msg)
     elif event.notice_type == "group_decrease":
         if event.sub_type == "kick_me":
             for i in Config.notice_to:
-                await bot.call_api("send_group_msg", group_id = int(i), message = f"唔……音卡在群聊（{str(event.group_id)}）被移出啦！\n操作者：{str(event.operator_id)}，已自动封禁！")
+                await bot.call_api("send_group_msg", group_id = int(i), message = f"唔……bot在群聊（{str(event.group_id)}）被移出啦！\n操作者：{str(event.operator_id)}，已自动封禁！")
             kicker = str(event.operator_id)
             if banned(kicker) == False:
                 banlist = json.loads(read(TOOLS + "/ban.json"))
@@ -55,7 +55,7 @@ async def _(bot: Bot, event: NoticeEvent):
         if str(event.user_id) in Config.bot:
             await bot.call_api("set_group_leave", group_id = event.group_id)
             for i in Config.notice_to:
-                await bot.call_api("send_group_msg", group_id = int(i), message = f"唔……九幽在群聊（{str(event.group_id)}）检测到被禁言啦，已自动退群！\n操作者：{str(event.operator_id)}，已自动封禁！")
+                await bot.call_api("send_group_msg", group_id = int(i), message = f"唔……bot在群聊（{str(event.group_id)}）检测到被禁言啦，已自动退群！\n操作者：{str(event.operator_id)}，已自动封禁！")
             kicker = str(event.operator_id)
             if banned(kicker) == False:
                 banlist = json.loads(read(TOOLS + "/ban.json"))
