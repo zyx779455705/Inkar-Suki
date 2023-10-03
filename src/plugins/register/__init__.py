@@ -112,7 +112,7 @@ async def _(event: GroupMessageEvent):
         await shutup.finish("唔……只有群主或管理员可以使用该命令！")
     subscribe = load_or_write_subscribe(event.group_id)
     if "闭嘴" in subscribe:
-        await shutup.finish("音卡已经暂时自主禁言啦！请不要重复调用。")
+        await shutup.finish("bot已经暂时自主禁言啦！请不要重复调用。")
     else:
         subscribe["闭嘴"] = {}
         load_or_write_subscribe(event.group_id, subscribe)
@@ -136,11 +136,11 @@ async def _(event: GroupMessageEvent):
         await speak.finish("唔……只有群主或管理员可以使用该命令！")
     subscribe = load_or_write_subscribe(event.group_id)
     if "闭嘴" not in subscribe:
-        await speak.finish("音卡没有自主禁言哦，请检查后重试~")
+        await speak.finish("bot没有自主禁言哦，请检查后重试~")
     else:
         del subscribe["闭嘴"]
         load_or_write_subscribe(event.group_id, subscribe)
-        await speak.finish("已解除音卡的自主禁言！")
+        await speak.finish("已解除bot的自主禁言！")
 
 fix = on_command("fix", priority=5)  # 修补数据，用于数据文件残缺时
 
