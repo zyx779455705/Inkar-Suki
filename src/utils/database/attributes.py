@@ -1399,7 +1399,8 @@ class JX3PlayerAttribute:
                 each_equip.kungfu_id,
                 each_equip.global_role_id,
                 each_equip.timestamp,
-                each_equip.tag
+                each_equip.tag,
+                database_id=each_equip.id,
             )
             try:
                 instance.validate()
@@ -1455,7 +1456,8 @@ class JX3PlayerAttribute:
             global_role_id: int,
             timestamp: int = Time().raw_time,
             equip_tag: str = "",
-            name: str = ""
+            name: str = "",
+            database_id: int | None = None,
         ):
         Equip.purge()
         self.equip_lines = equips_lines
@@ -1465,6 +1467,7 @@ class JX3PlayerAttribute:
         self.timestamp = timestamp
         self.tag = equip_tag
         self.name = name
+        self.database_id = database_id
 
     def validate(self) -> None:
         if not self.equips:
@@ -1535,7 +1538,7 @@ class JX3PlayerAttribute:
             basic_attr = merge_dicts(basic_attr, set_attr)
         return FinalAttr(cast(dict[str, int], basic_attr), self.kungfu_id).output_attr()
 
-    def save(self):
+    def save(self, *, only_if_newer: bool = False) -> bool:
         pretags = {
             "PVE": 0,
             "PVP": 0,
@@ -1550,8 +1553,43 @@ class JX3PlayerAttribute:
                 else:
                     pretags["PVE"] += 1
             self.tag = max(pretags, key=lambda k: pretags[k])
-        exist_same_tag_equip = cast(PlayerEquipsCache | None, db.where_one(PlayerEquipsCache(), "global_role_id = ? AND tag = ? AND kungfu_id = ?", self.global_role_id, self.tag, self.kungfu_id, default=None))
+        if self.database_id is not None:
+            exist_same_tag_equip = cast(
+                PlayerEquipsCache | None,
+                db.where_one(
+                    PlayerEquipsCache(),
+                    "id = ?",
+                    self.database_id,
+                    default=None,
+                ),
+            )
+            same_tag_equips = (
+                [exist_same_tag_equip]
+                if exist_same_tag_equip is not None
+                else []
+            )
+        else:
+            same_tag_equips = cast(
+                list[PlayerEquipsCache],
+                db.where_all(
+                    PlayerEquipsCache(),
+                    "global_role_id = ? AND tag = ? AND kungfu_id = ?",
+                    self.global_role_id,
+                    self.tag,
+                    self.kungfu_id,
+                    default=[],
+                ) or [],
+            )
+            exist_same_tag_equip = (
+                max(same_tag_equips, key=lambda equip: equip.timestamp)
+                if same_tag_equips
+                else None
+            )
         if exist_same_tag_equip is not None:
+            if only_if_newer and any(
+                equip.timestamp >= self.timestamp for equip in same_tag_equips
+            ):
+                return False
             exist_same_tag_equip.equips_data = self.equip_lines
             exist_same_tag_equip.global_role_id = self.global_role_id
             exist_same_tag_equip.kungfu_id = self.kungfu_id
@@ -1568,3 +1606,4 @@ class JX3PlayerAttribute:
                 timestamp = self.timestamp
             )
         db.save(exist_same_tag_equip)
+        return True

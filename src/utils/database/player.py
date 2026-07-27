@@ -11,7 +11,7 @@ import re
 
 async def get_role_id(roleName: str, serverName: str) -> dict | None:
     if Config.jx3.api.enable:
-        url = f"{Config.jx3.api.url}/data/role/detail"
+        url = f"{Config.jx3.api.url}/role/detail"
         params = {
             "token": Config.jx3.api.token,
             "server": serverName,
@@ -29,7 +29,7 @@ async def get_role_id(roleName: str, serverName: str) -> dict | None:
     
 async def submit_role_force(roleName: str, serverName: str) -> str | None:
     if Config.jx3.api.enable:
-        url = f"{Config.jx3.api.url}/data/role/detail"
+        url = f"{Config.jx3.api.url}/role/detail"
         params = {
             "token": Config.jx3.api.token,
             "server": serverName,
@@ -91,7 +91,7 @@ async def get_uid_data(global_role_id: str = "", role_id: str = "", server: str 
     roleName = _role_name if "*" not in _role_name else role_name
 
     if not global_role_id and role_id:
-        url = f"{Config.jx3.api.url}/data/role/detail"
+        url = f"{Config.jx3.api.url}/role/detail"
         params = {
             "token": Config.jx3.api.token,
             "server": server,

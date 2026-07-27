@@ -36,7 +36,7 @@ async def jx3_saohua_random(args: Message = CommandArg()):
     """
     if args.extract_plain_text() != "":
         return
-    url = f"{Config.jx3.api.url}/data/saohua/random"
+    url = f"{Config.jx3.api.url}/saohua/random"
     info = (await Request(url).get()).json()
     msg = info["data"]["text"]
     await saohua_matcher.finish(msg)
@@ -52,7 +52,7 @@ async def jx3_saohua_tiangou(args: Message = CommandArg()):
     """
     if args.extract_plain_text() != "":
         return
-    url = f"{Config.jx3.api.url}/data/saohua/content"
+    url = f"{Config.jx3.api.url}/saohua/content"
     info = (await Request(url).get()).json()
     msg = info["data"]["text"]
     await tiangou_matcher.finish(msg)

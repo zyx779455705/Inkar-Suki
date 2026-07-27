@@ -9,7 +9,7 @@ async def get_role_info(server: str, name: str, token: str = ""):
         "name": name,
         "server": server
     }
-    url = f"{Config.jx3.api.url}/data/role/detail"
+    url = f"{Config.jx3.api.url}/role/detail"
     data = (await Request(url, params=params).get()).json()
     if data["code"] == 404:
         return "没有找到该玩家哦~\n需要该玩家在世界频道发言后方可查询。"

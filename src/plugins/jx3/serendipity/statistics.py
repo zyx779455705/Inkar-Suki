@@ -13,7 +13,7 @@ async def get_serendipity_statistics(server: str, event_name: str):
     params = {"name": event_name, "token": Config.jx3.api.token}
     if server:
         params["server"] = server
-    data = (await Request(f"{Config.jx3.api.url}/data/event/statistics", params=params).get()).json()
+    data = (await Request(f"{Config.jx3.api.url}/event/statistics", params=params).get()).json()
     if data["code"] != 200 or not data["data"]:
         return "未找到该奇遇的统计记录，请检查服务器和奇遇名称后重试！"
 

@@ -4,7 +4,7 @@ from src.utils.network import Request
 async def get_exam_answer(question_keyword: str):
     def qa(q, a):
         return f"问题：{q}\n答案：{a}"
-    url = f"{Config.jx3.api.url}/data/exam/search"
+    url = f"{Config.jx3.api.url}/exam/search"
     params = {
         "subject": question_keyword
     }

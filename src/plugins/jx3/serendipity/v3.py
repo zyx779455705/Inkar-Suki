@@ -205,7 +205,7 @@ async def get_serendipity_image_v3(server: str, name: str):
     uid, global_role_id, school = role
 
     if Config.jx3.api.enable:
-        url = f"{Config.jx3.api.url}/data/event/records"
+        url = f"{Config.jx3.api.url}/event/records"
         params = {
             "server": server,
             "name": name,

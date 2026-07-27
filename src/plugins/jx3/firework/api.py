@@ -13,7 +13,7 @@ from ._template import (
 )
 
 async def get_firework_record(server: str, name: str):
-    url = f"{Config.jx3.api.url}/data/show/records"
+    url = f"{Config.jx3.api.url}/firework/records"
     params = {
         "token": Config.jx3.api.token_v2,
         "server": server,
@@ -29,7 +29,7 @@ async def get_firework_record(server: str, name: str):
                 server=record["server"],
                 sender=record["sender"],
                 receiver=record["receiver"],
-                map_name=record["map_name"],
+                map_name=record["mapName"],
                 firework=record["firework"],
                 time=Time(record["time"]).format()
             )

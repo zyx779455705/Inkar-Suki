@@ -18,8 +18,9 @@ from .teamcd import (
 )
 from .role_monster import get_role_monsters_map
 from .monster import get_monsters_map
+from .raid import get_raid_record_image
 
-zone_record_matcher = on_command("jx3_zones", aliases={"副本"}, force_whitespace=True, priority=5)
+zone_record_matcher = on_command("jx3_zones", aliases={"副本v1"}, force_whitespace=True, priority=5)
 
 @zone_record_matcher.handle()
 async def _(event: GroupMessageEvent, message: Message = CommandArg()):
@@ -27,7 +28,7 @@ async def _(event: GroupMessageEvent, message: Message = CommandArg()):
         return
     args = message.extract_plain_text().strip().split(" ")
     if len(args) not in [1, 2]:
-        await zone_record_matcher.finish(PROMPT.ArgumentCountInvalid + "\n参考格式：副本 <服务器> <角色名>\n参考格式：副本 <服务器> <多角色>\n多角色以英文分号(;)分割。")
+        await zone_record_matcher.finish(PROMPT.ArgumentCountInvalid + "\n参考格式：副本v1 <服务器> <角色名>\n参考格式：副本v1 <服务器> <多角色>\n多角色以英文分号(;)分割。")
     if len(args) == 1:
         server = None
         name = args[0]
@@ -47,6 +48,24 @@ async def _(event: GroupMessageEvent, message: Message = CommandArg()):
     else:
         data = await teamcd_v1(server, name)
     await zone_record_matcher.finish(data)
+
+zone_record_v2_matcher = on_command("jx3_zones_v2", aliases={"副本v2", "副本"}, force_whitespace=True, priority=5)
+
+@zone_record_v2_matcher.handle()
+async def _(message: Message = CommandArg()):
+    if not Config.jx3.api.enable:
+        return
+    args = message.extract_plain_text().strip().split()
+    if len(args) != 2:
+        await zone_record_v2_matcher.finish(
+            PROMPT.ArgumentCountInvalid + "\n参考格式：副本 <服务器> <角色名>"
+        )
+    server = Server(args[0]).server
+    if server is None:
+        await zone_record_v2_matcher.finish(PROMPT.ServerNotExist)
+    await zone_record_v2_matcher.finish(
+        await get_raid_record_image(server, args[1])
+    )
 
 all_roles_teamcd_matcher = on_command("jx3_zoneslist", aliases={"副本列表"}, force_whitespace=True, priority=5)
 

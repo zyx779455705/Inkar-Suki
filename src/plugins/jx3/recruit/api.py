@@ -29,34 +29,35 @@ async def check_ad(msg: str, data: dict) -> bool:
 async def get_recruit_image(server: str, keyword: str = "", local: bool = False, filter: bool = False, token: str = ""):
     params = {
         "token": token,
-        "server": server
+        "server": server,
+        "label": 3,
     }
-    url = f"{Config.jx3.api.url}/data/recruit/search"
+    url = f"{Config.jx3.api.url}/recruit/search"
     if keyword != "":
         params["keyword"] = keyword
     data = (await Request(url, params=params).get()).json()
     if data["code"] != 200:
         return "唔……未找到相关团队，请检查后重试！"
     adFlags = (await Request("https://inkar-suki.codethink.cn/filters").get()).json()
-    time_now = Time(data["data"]["time"]).format("%H:%M:%S")
-    data = data["data"]["data"]
+    time_now = Time(data["time"]).format("%H:%M:%S")
+    data = data["data"]
     contents = []
     for i in range(len(data)):
         detail = data[i]
-        content = detail["content"]
+        content = detail["commentText"]
         if filter:
             to_filter = await check_ad(content, adFlags)
             if to_filter:
                 continue
-        flag = False if not detail["roomID"] else True
+        flag = bool(detail.get("variantInfo", {}).get("isSwitchServer"))
         if local and flag:
             continue
-        flag = "" if not detail["roomID"] else "<img src=\"https://img.jx3box.com/image/box/servers.svg\" style=\"width:20px;height:20px;\">" 
+        flag = "" if not flag else "<img src=\"https://img.jx3box.com/image/box/servers.svg\" style=\"width:20px;height:20px;\">"
         num = str(i + 1)
-        name = detail["activity"]
-        level = str(detail["level"])
-        leader = detail["leader"]
-        count = str(detail["number"]) + "/" + str(detail["maxNumber"])
+        name = detail["activityName"]
+        level = str(detail["roleLevel"])
+        leader = detail["roleName"]
+        count = str(detail["currentMemberCount"])
         create_time = Time(detail["createTime"]).format()
         if local:
             template = template_local

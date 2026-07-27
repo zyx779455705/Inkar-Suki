@@ -9,10 +9,10 @@ from src.templates import HTMLSourceCode
 from ._template import table_zhue_head, template_zhue
 
 async def get_zhue_image(server: str):
-    url = f"{Config.jx3.api.url}/data/smite/records"
+    url = f"{Config.jx3.api.url}/wicked/records"
     params = {
         "server": server,
-        "token": Config.jx3.api.token
+        "token": Config.jx3.api.token_v2
     }
     data = (await Request(url, params=params).get()).json()
     tables = []
@@ -20,7 +20,7 @@ async def get_zhue_image(server: str):
         tables.append(
             Template(template_zhue).render(
                 server = info["server"],
-                map = info["map_name"],
+                map = info["mapName"],
                 relate = Time().relate(info["time"])
             )
         )

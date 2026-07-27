@@ -16,7 +16,7 @@ from ._template import collect_serendipity_card, collect_serendipity_row
 
 async def get_serendipity_collect(server: str, days: int):
     params = {"server": server, "num": days, "token": Config.jx3.api.token}
-    data = (await Request(f"{Config.jx3.api.url}/data/event/collect", params=params).get()).json()
+    data = (await Request(f"{Config.jx3.api.url}/event/collect", params=params).get()).json()
     if data["code"] != 200 or not data["data"]:
         return "未找到奇遇汇总记录，请检查服务器后重试！"
 
@@ -30,7 +30,7 @@ async def get_serendipity_collect(server: str, days: int):
     cards = []
     for record in records:
         event_name = record["event"]
-        latest = record["data"]
+        latest = record["last"]
         category = assets[event_name] if event_name in assets else "common"
         show_path = build_path(ASSETS, ["image", "jx3", "serendipity", "show", category, f"{event_name}.png"])
         name_path = build_path(ASSETS, ["image", "jx3", "serendipity", "name", f"{event_name}.png"])

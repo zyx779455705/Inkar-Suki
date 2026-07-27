@@ -9,7 +9,7 @@ from src.templates import SimpleHTML
 
 @token_required
 async def get_sandbox_image(server: str, token: str = ""):
-    url = f"{Config.jx3.api.url}/data/sand/records"
+    url = f"{Config.jx3.api.url}/sand/records"
     params = {
         "token": token,
         "server": server

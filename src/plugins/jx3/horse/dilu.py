@@ -14,7 +14,7 @@ async def get_dilu_records(server: str = ""):
     params = {"token": Config.jx3.api.token_v2}
     if server:
         params["server"] = server
-    data = (await Request(f"{Config.jx3.api.url}/data/steed/records", params=params).get()).json()
+    data = (await Request(f"{Config.jx3.api.url}/steed/records", params=params).get()).json()
 
     if data["code"] != 200 or not data["data"]:
         return "未找到相关的卢记录，请检查服务器后重试！"
@@ -23,7 +23,7 @@ async def get_dilu_records(server: str = ""):
     camp_icons = {"浩气盟": good, "恶人谷": bad, "中立": ""}
     rows = []
     for record in records:
-        price = record["auction_amount"]
+        price = record["auctionAmount"]
         if "万" in price:
             brick, gold = price.split("万", maxsplit=1)
             gold = gold.removesuffix("金")
@@ -33,16 +33,16 @@ async def get_dilu_records(server: str = ""):
         rows.append(
             Template(template_dilu).render(
                 server=record["server"],
-                flush=Time(record["refresh_time"]).format(),
-                captured=Time(record["capture_time"]).format(),
-                sell=Time(record["auction_time"]).format(),
-                map=record["map_name"],
-                capturer=record["capture_role_name"],
-                ci=camp_icons[record["capture_camp_name"]],
-                cc=record["capture_camp_name"],
-                auctioner=record["auction_role_name"],
-                bi=camp_icons[record["auction_camp_name"]],
-                bc=record["auction_camp_name"],
+                flush=Time(record["refreshTime"]).format(),
+                captured=Time(record["captureTime"]).format(),
+                sell=Time(record["auctionTime"]).format(),
+                map=record["mapName"],
+                capturer=record["captureRoleName"],
+                ci=camp_icons[record["captureCampName"]],
+                cc=record["captureCampName"],
+                auctioner=record["auctionRoleName"],
+                bi=camp_icons[record["auctionCampName"]],
+                bc=record["auctionCampName"],
                 price=coin_to_image(price),
             )
         )

@@ -25,7 +25,7 @@ async def get_serendipity_v2(server: str, name: str, type: bool):
     if role_id == "":
         return PROMPT.PlayerNotExist
     if Config.jx3.api.enable:
-        url = f"{Config.jx3.api.url}/data/event/records"
+        url = f"{Config.jx3.api.url}/event/records"
         params = {
             "server": server,
             "name": name,

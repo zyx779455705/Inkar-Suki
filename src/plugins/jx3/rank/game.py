@@ -29,16 +29,16 @@ GAME_RANK_NAMES = (
 
 FIELD_NAMES = (
     ("server", "服务器"),
-    ("camp_name", "阵营"),
-    ("role_name", "角色"),
-    ("tong_name", "帮会"),
-    ("master_name", "帮主"),
-    ("force_name", "门派"),
-    ("castle_name", "据点"),
-    ("role_level", "等级"),
-    ("now_count", "当前数量"),
-    ("max_count", "最大数量"),
-    ("total_score", "积分"),
+    ("campName", "阵营"),
+    ("name", "角色"),
+    ("tongName", "帮会"),
+    ("masterName", "帮主"),
+    ("forceName", "门派"),
+    ("castleName", "据点"),
+    ("level", "等级"),
+    ("nowCount", "当前数量"),
+    ("maxCount", "最大数量"),
+    ("totalScore", "积分"),
 )
 
 TABLE_HEAD = """<th class="short-column">排名</th>
@@ -51,7 +51,7 @@ async def get_game_rank(server: str, rank_name: str):
     params = {"name": rank_name, "token": Config.jx3.api.token}
     if server:
         params["server"] = server
-    response = (await Request(f"{Config.jx3.api.url}/data/rank/statistics", params=params).get()).json()
+    response = (await Request(f"{Config.jx3.api.url}/rank/statistics", params=params).get()).json()
     if response["code"] != 200 or not response["data"]:
         return "未找到该榜单的数据，请检查服务器和榜单名称后重试！"
 
@@ -78,7 +78,7 @@ async def get_game_rank(server: str, rank_name: str):
             values = []
             for field, _ in columns:
                 value = record[field] if field in record else "-"
-                if field == "total_score" and isinstance(value, (int, float)):
+                if field == "totalScore" and isinstance(value, (int, float)):
                     value = f"{value:,}"
                 values.append(value)
             rows.append(Template(TABLE_ROW).render(rank=record["rank"], values=values))

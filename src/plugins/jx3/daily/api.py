@@ -14,7 +14,7 @@ async def get_daily_info(predict: int = 0):
     Returns:
         msg (str): 日常消息。
     """
-    url = f"{Config.jx3.api.url}/data/active/calendar"
+    url = f"{Config.jx3.api.url}/active/calendar"
     params = {
         "predict": predict
     }
@@ -31,9 +31,9 @@ async def get_daily_info(predict: int = 0):
     orecar = data["orecar"]
     school = data["school"]
     rescue = data["rescue"]
-    luck = ";".join(data["luck"])
+    luck = ";".join(data["lucky"])
     hometown = ";".join(data["card"])
-    public = ";".join(data["team"][0].split(";"))
-    ten = ";".join(data["team"][1].split(";"))
+    public = ";".join(data["weekly"]["conn"])
+    ten = ";".join(data["weekly"]["raid"])
     msg = f"当前时间：{date} 星期{week}\n大战：{war}\n战场：{battle}\n宗门：{school}\n阵营：{orecar}\n首领：{leader}\n驰援：{rescue}\n\n【福缘宠物】\n{luck}\n【家园声望·加倍道具】\n{hometown}\n【武林通鉴·公共任务】\n{public}\n【武林通鉴·团队秘境】\n{ten}"
     return msg

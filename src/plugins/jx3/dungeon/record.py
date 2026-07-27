@@ -15,7 +15,7 @@ from ._template import (
 
 @token_required
 async def get_item_record(name: str, token: str = ""):
-    url = f"{Config.jx3.api.url}/data/reward/statistics"
+    url = f"{Config.jx3.api.url}/reward/statistics"
     params = {
         "name": name,
         "token": token
@@ -25,9 +25,9 @@ async def get_item_record(name: str, token: str = ""):
         return "未找到相关物品，请检查物品名称是否正确！"
     tables = []
     for i in data["data"]:
-        role_name = i["role_name"]
-        item_name = i["item_name"]
-        map_name = i["map_name"]
+        role_name = i["roleName"]
+        item_name = i["itemName"]
+        map_name = i["mapName"]
         pick_time = Time(i["time"]).format()
         relate_time = Time().relate(i["time"])
         server = i["server"]

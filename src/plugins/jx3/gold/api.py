@@ -20,7 +20,7 @@ async def get_coin_price_image(server: str = ""):
         "server": server,
         "token": Config.jx3.api.token
     }
-    url = f"{Config.jx3.api.url}/data/trade/demon"
+    url = f"{Config.jx3.api.url}/trade/demon"
     data = (await Request(url, params=params).get()).json()
     tables = []
     for each_price in data["data"]:

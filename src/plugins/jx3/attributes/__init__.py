@@ -35,7 +35,7 @@ import hashlib
 
 from .v2_remake import get_attr_v2_remake, get_attr_v2_remake_build, get_attr_v2_remake_global
 from .v4 import get_attr_v4
-from .equip_replace import EQUIP_LOCATION
+from .equip_replace import EQUIP_LOCATION, replace_enchant_in_equip_lines
 
 attribute_matcher = on_command("jx3_attribute", aliases={"属性", "查装"}, force_whitespace=True, priority=5)
 
@@ -284,9 +284,13 @@ def save_attribute_submit_role(role_info: RoleData) -> None:
 def validate_attribute_instance(instance: JX3PlayerAttribute) -> None:
     instance.validate()
 
-def save_attribute_instance(instance: JX3PlayerAttribute) -> None:
+def save_attribute_instance(
+    instance: JX3PlayerAttribute,
+    *,
+    only_if_newer: bool = False,
+) -> bool:
     validate_attribute_instance(instance)
-    instance.save()
+    return instance.save(only_if_newer=only_if_newer)
 
 def format_attribute_save_error(instance: JX3PlayerAttribute, exc: BaseException) -> str:
     kungfu = Kungfu.with_internel_id(instance.kungfu_id).name or str(instance.kungfu_id)
@@ -607,17 +611,16 @@ async def _(event: GroupMessageEvent, state: T_State, num: Message = Arg()):
         global_role_id = global_role_id
     )
     logs_db.save(new_log)
-    for each_enchant_line in current_data.equip_lines:
-        if each_enchant_line[0] == replace_location_code:
-            if enchant.name.startswith("彩·"):
-                # 五彩石
-                each_enchant_line[4][3][1] = enchant.enchant_id
-            elif enchant.is_common:
-                # 大附魔
-                each_enchant_line[6] = enchant.enchant_id
-            else:
-                # 小附魔
-                each_enchant_line[5] = enchant.enchant_id
+    try:
+        current_data.equip_lines = replace_enchant_in_equip_lines(
+            current_data.equip_lines,
+            replace_location_code,
+            enchant.enchant_id,
+            is_color_stone=enchant.name.startswith("彩·"),
+            is_common=enchant.is_common,
+        )
+    except ValueError:
+        await replace_enchant_matcher.finish(PROMPT.EquipNotFound)
     current_data.save()
     await replace_enchant_matcher.finish(f"已替换为 {enchant.name}，请尝试使用 属性 命令查询效果！")
 
@@ -652,25 +655,39 @@ async def _import_attribute_jcl(bot: Bot, event: GroupUploadNoticeEvent) -> None
         return
     loop = asyncio.get_running_loop()
     results = await asyncio.gather(*[
-        loop.run_in_executor(attribute_db_executor, save_attribute_instance, each_data)
+        loop.run_in_executor(
+            attribute_db_executor,
+            lambda data=each_data: save_attribute_instance(data, only_if_newer=True),
+        )
         for each_data in attributes_data
     ], return_exceptions=True)
     saved_data = [
         each_data
         for each_data, result in zip(attributes_data, results)
-        if not isinstance(result, BaseException)
+        if result is True
+    ]
+    skipped_data = [
+        each_data
+        for each_data, result in zip(attributes_data, results)
+        if result is False
     ]
     failed_data = [
         format_attribute_save_error(each_data, cast(BaseException, result))
         for each_data, result in zip(attributes_data, results)
         if isinstance(result, BaseException)
     ]
-    if not saved_data:
+    if not saved_data and skipped_data:
+        msg = "识别到的装备均已有时间戳更新或相同的记录，未执行替换。"
+    elif not saved_data:
         msg = "未发现可用装备数据，已跳过不可用数据。"
     else:
         msg = "以下全局玩家ID完成入库："
     for each_data in saved_data:
         msg += f"\n{each_data.name}（{each_data.global_role_id}）"
+    if skipped_data:
+        msg += "\n以下角色已有时间戳更新或相同的装备，已跳过："
+        for each_data in skipped_data:
+            msg += f"\n{each_data.name}（{each_data.global_role_id}）"
     if failed_data:
         msg += "\n以下装备数据不可用，已跳过："
         for line in failed_data[:10]:

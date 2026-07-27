@@ -19,10 +19,12 @@ async def get_trial_rank(school: str, server: str):
         params["server"] = server
     data = (
         await Request(
-            f"{Config.jx3.api.url}/data/rank/trials",
+            f"{Config.jx3.api.url}/rank/trials",
             params=params,
         ).get()
     ).json()
+    if data["code"] != 200 or not data["data"]:
+        return "未找到该心法的试炼榜单，请检查服务器和心法名称后重试！"
     groups = [data["data"]] if isinstance(data["data"], dict) else data["data"]
     records = [
         (group["server"], record)
@@ -32,9 +34,9 @@ async def get_trial_rank(school: str, server: str):
     if not server:
         records.sort(
             key=lambda item: (
-                item[1]["max_level"],
-                item[1]["total_score"],
-                item[1]["equip_score"],
+                item[1]["maxLevel"],
+                item[1]["totalScore"],
+                item[1]["equipScore"],
             ),
             reverse=True,
         )
@@ -44,10 +46,10 @@ async def get_trial_rank(school: str, server: str):
         Template(SLRANK_TABLE_BODY).render(
             rank=rank,
             server=record_server,
-            role_name=record["role_name"],
-            level=record["max_level"],
-            grade=f"{int(record['total_score']):,}",
-            score=record["equip_score"],
+            role_name=record["roleName"],
+            level=record["maxLevel"],
+            grade=f"{int(record['totalScore']):,}",
+            score=record["equipScore"],
         )
         for rank, (record_server, record) in enumerate(records, 1)
     ]

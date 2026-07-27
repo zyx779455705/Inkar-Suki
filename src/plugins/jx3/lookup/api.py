@@ -15,21 +15,18 @@ async def get_tieba_records(user_id: int) -> str:
         "uid": user_id,
         "token": Config.jx3.api.token
     }
-    url = f"{Config.jx3.api.url}/data/fraud/detail"
+    url = f"{Config.jx3.api.url}/fraud/detail"
     data = (await Request(url, params=params).get()).json()
     if not data["data"]:
         return "未找到相关记录！"
-    records = data["data"]["records"]
-    if not records:
-        return "未找到相关记录！"
-    else:
-        all_records = []
-        for each_record in records:
-            all_records.extend(each_record["data"])
-        msg = f"（共计{len(all_records)}条，已显示前{3 if len(all_records) >= 3 else len(all_records)}条）\n"
-        for record in all_records[:3]:
-            msg += ("标题：" + record["title"] + "\n链接：" + record["url"] + "\n")
-        return msg.strip()
+    records = data["data"]
+    msg = f"（共计{len(records)}条，已显示前{min(3, len(records))}条）\n"
+    for record in records[:3]:
+        msg += (
+            f"标题：{record['title']}\n"
+            f"链接：https://tieba.baidu.com/p/{record['tid']}\n"
+        )
+    return msg.strip()
     
 
 async def get_daren_count(self_id: int, user_id: int, pskey: str) -> str:

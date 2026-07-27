@@ -72,7 +72,7 @@ async def get_serendipity_image_v4(server: str, name: str):
 
     if Config.jx3.api.enable:
         response = await Request(
-            f"{Config.jx3.api.url}/data/event/records",
+            f"{Config.jx3.api.url}/event/records",
             params={"server": server, "name": name, "token": Config.jx3.api.token},
         ).get()
         payload = response.json()

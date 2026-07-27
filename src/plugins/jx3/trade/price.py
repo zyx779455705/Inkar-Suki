@@ -26,18 +26,27 @@ def _format_price(value: Any) -> str:
     return f"{price:g}元"
 
 
+def _item_records(item_data: dict) -> list[dict]:
+    records = []
+    for group in item_data.get("list") or []:
+        if isinstance(group, list):
+            group_records = group
+        elif isinstance(group, dict):
+            group_records = group.get("list") or []
+        else:
+            continue
+        records.extend(record for record in group_records if isinstance(record, dict))
+    return records
+
+
 def get_item_price(item_data: dict) -> dict[str, str]:
     tables = {"电信一区": "", "双线一区": "", "无界区": ""}
     grouped_records = {"电信一区": [], "双线一区": [], "无界区": []}
-    records = []
-    for group in item_data.get("list") or []:
-        if not isinstance(group, list):
-            continue
-        records.extend(
-            record
-            for record in group
-            if isinstance(record, dict) and record.get("source") != 4
-        )
+    records = [
+        record
+        for record in _item_records(item_data)
+        if record.get("source") != 4
+    ]
     records = sorted(records, key=lambda record: record.get("date") or "", reverse=True)
 
     for record in records:
@@ -93,10 +102,7 @@ async def get_wanbaolou_data(item_name: str) -> str:
 
 
 def get_item_history(item_data: dict) -> tuple[list[float], list[str]]:
-    all_records = []
-    for group in item_data.get("list") or []:
-        if isinstance(group, list):
-            all_records.extend(record for record in group if isinstance(record, dict))
+    all_records = _item_records(item_data)
     records = [
         record for record in all_records
         if record.get("source") != 4 and record.get("date") and record.get("value") is not None
@@ -154,12 +160,28 @@ async def get_single_item_price(item_name: str, exact: bool = False) -> str | di
 
     data = (
         await Request(
-            f"{Config.jx3.api.url.rstrip('/')}/data/trade/records",
+            f"{Config.jx3.api.url.rstrip('/')}/trade/item/records",
             params={"name": query_name, "token": Config.jx3.api.token},
         ).get()
     ).json()
     item_data = data.get("data")
     if data.get("code") != 200 or not isinstance(item_data, dict) or not item_data:
+        if not exact:
+            search_data = (
+                await Request(
+                    f"{Config.jx3.api.url.rstrip('/')}/trade/item/search",
+                    params={"name": query_name, "token": Config.jx3.api.token},
+                ).get()
+            ).json()
+            matches = search_data.get("data")
+            if search_data.get("code") == 200 and isinstance(matches, list):
+                names = [
+                    str(item["name"])
+                    for item in matches
+                    if isinstance(item, dict) and item.get("name")
+                ]
+                if names:
+                    return {"v": names}
         return ["唔……未找到该物品！\n请确认是否应该使用“交易行”命令？"]
 
     final_item_name = str(item_data.get("name") or "未知")
@@ -175,7 +197,7 @@ async def get_single_item_price(item_name: str, exact: bool = False) -> str | di
         item_alias=str(item_data.get("alias") or "--"),
         custom_msg=str(item_data.get("desc") or "--"),
         publish_time=str(item_data.get("date") or "未知"),
-        publish_price=_format_price(item_data.get("value")),
+        publish_price=_format_price(item_data.get("retail")),
         trade_data=trade_data,
         wanbaolou=wbl_data,
         dates=json.dumps(dates, ensure_ascii=False),

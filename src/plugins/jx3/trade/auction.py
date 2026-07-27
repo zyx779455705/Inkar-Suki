@@ -18,7 +18,7 @@ async def get_auction_image(server: str, name: str = ""):
         "limit": 50,
         "token": Config.jx3.api.token_v2,
     }
-    data = (await Request(f"{Config.jx3.api.url}/data/auction/records",params=params,).get()).json()
+    data = (await Request(f"{Config.jx3.api.url}/auction/records", params=params).get()).json()
 
     if data["code"] != 200:
         return "未找到相关记录，请检查物品名称！"
@@ -30,7 +30,7 @@ async def get_auction_image(server: str, name: str = ""):
 
     rows = []
     for record in records:
-        price = record["item_amount"]
+        price = record["itemAmount"]
         if "万" in price:
             brick, gold = price.split("万", maxsplit=1)
             gold = gold.removesuffix("金")
@@ -43,15 +43,15 @@ async def get_auction_image(server: str, name: str = ""):
                 "image",
                 "jx3",
                 "camp",
-                "haoqi.png" if record["camp_name"] == "浩气盟" else "eren.png",
+                "haoqi.png" if record["campName"] == "浩气盟" else "eren.png",
             ],
         )
         rows.append(
             Template(template_auction).render(
                 camp_icon=camp_icon,
-                camp_name=record["camp_name"],
-                role_name=record["role_name"],
-                item_name=record["item_name"],
+                camp_name=record["campName"],
+                role_name=record["roleName"],
+                item_name=record["itemName"],
                 item_amount=coin_to_image(price),
                 time=Time(record["time"]).format(),
             )
