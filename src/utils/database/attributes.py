@@ -1133,7 +1133,8 @@ class JX3PlayerAttribute:
             url = read(CONST + "/cache/attribute.txt")
             params = {
                 "server": server,
-                "name": name
+                "name": name,
+                "format": "client"
             }
             try:
                 raw_data = (await Request(url, params=params).get()).json()
@@ -1159,14 +1160,14 @@ class JX3PlayerAttribute:
             
             diamonds = []
 
-            for each_diamond in each_equip.get("aMountDiamond", []):
+            for each_diamond in each_equip.get("aSlotItem", []):
                 diamonds.append(
                     each_diamond
                 )
             
             if position_id == 0:
-                diamonds.append(
-                    each_equip["aColorDiamond"]
+                diamonds.extend(
+                    each_equip["ColorInfo"]
                 )
 
             permanent_enchant_id = each_equip["dwPermanentEnchantID"]
@@ -1189,7 +1190,8 @@ class JX3PlayerAttribute:
             results,
             [],
             int(raw_data["detail"]["kungfuId"]),
-            int(raw_data["detail"]["globalId"])
+            int(raw_data["detail"]["globalId"]),
+            timestamp=int(raw_data["detail"]["cacheTime"])
         )
         try:
             instance.save()
@@ -1226,7 +1228,7 @@ class JX3PlayerAttribute:
         if lua_table[7]:
             global_role_id = int(lua_table[7])
         else:
-            global_role_id = 1145141919810
+            global_role_id = 0
         result = cls(
             equips_lines, talents_lines,
             cast(int, Kungfu.with_internel_id(int(lua_table[3]), True).id),
@@ -1454,7 +1456,7 @@ class JX3PlayerAttribute:
             talents_lines: list[int],
             kungfu_id: int,
             global_role_id: int,
-            timestamp: int = Time().raw_time,
+            timestamp: int = 0,
             equip_tag: str = "",
             name: str = "",
             database_id: int | None = None,
@@ -1464,7 +1466,7 @@ class JX3PlayerAttribute:
         self.talents_lines = talents_lines
         self.kungfu_id = normalize_kungfu_id(kungfu_id)
         self.global_role_id = global_role_id
-        self.timestamp = timestamp
+        self.timestamp = timestamp if timestamp else Time().raw_time
         self.tag = equip_tag
         self.name = name
         self.database_id = database_id

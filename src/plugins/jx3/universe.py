@@ -96,6 +96,9 @@ from .joy import (
 from .lookup import (
     lookup_matcher
 )
+from .message import (
+    chat_records_matcher
+)
 from .penzai import (
     dunhao_matcher,
     waiguan_matcher
