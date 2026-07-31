@@ -27,6 +27,11 @@ chat_records_css = """
     table-layout: fixed;
 }
 
+.item-table th,
+.item-table td {
+    box-sizing: border-box;
+}
+
 .item-table .record-index {
     width: 80px;
 }
