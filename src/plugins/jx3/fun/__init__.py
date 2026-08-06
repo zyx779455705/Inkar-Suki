@@ -1,5 +1,4 @@
 from typing import Literal
-from src.utils.command import on_command
 from nonebot.params import CommandArg, RawCommand
 from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent, MessageSegment as ms
 
@@ -8,6 +7,7 @@ from src.const.jx3.school import School
 from src.const.jx3.server import Server
 from src.config import Config
 from src.const.prompts import PROMPT
+from src.utils.command import on_command
 from src.utils.analyze import check_number
 from src.utils.network import Request
 from src.plugins.preferences.app import Preference

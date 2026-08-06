@@ -1,11 +1,11 @@
 import asyncio
 
 from jinja2 import Template
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, Bot
 from nonebot.params import CommandArg, Arg
 from nonebot.typing import T_State
 
+from src.utils.command import on_command
 from src.utils.analyze import check_number
 from src.utils.permission import check_permission, denied
 from src.utils.database.operation import get_group_settings, set_group_settings

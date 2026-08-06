@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Any, cast, Callable
 from jinja2 import Template
-from src.utils.command import on_command
 from nonebot.log import logger
 from nonebot.params import CommandArg, Arg, RawCommand
 from nonebot.typing import T_State
@@ -13,6 +12,7 @@ from src.const.path import ASSETS, DATA, build_path
 from src.const.prompts import PROMPT
 from src.const.jx3.server import Server
 from src.const.jx3.kungfu import Kungfu
+from src.utils.command import on_command
 from src.utils.analyze import Locations, check_number
 from src.utils.network import Request
 from src.utils.generate import generate

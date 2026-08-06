@@ -1,9 +1,10 @@
 from nonebot import on_message
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, PrivateMessageEvent
 from nonebot.exception import ActionFailed
 from nonebot.log import logger
 from nonebot.params import CommandArg
+
+from src.utils.command import on_command
 
 from .app import (
     bind_team_member,

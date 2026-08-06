@@ -1,10 +1,10 @@
-from src.utils.command import on_command
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, Bot
 from nonebot.params import CommandArg
 
 from src.config import Config
 from src.const.prompts import PROMPT
+from src.utils.command import on_command
 from src.utils.analyze import check_number
 from src.utils.permission import check_permission, denied
 from src.utils.message import message_universal

@@ -1,9 +1,9 @@
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 from nonebot.params import CommandArg
 
 from src.const.prompts import PROMPT
 from src.const.jx3.server import Server
+from src.utils.command import on_command
 
 from .chutian import get_chutian_image
 from .yuncong import get_yuncong_image

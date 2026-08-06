@@ -1,6 +1,7 @@
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
 from nonebot.params import CommandArg
+
+from src.utils.command import on_command
 
 from .app import get_bulletin_img
 

@@ -1,9 +1,9 @@
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
 from nonebot.params import CommandArg
 
 from src.const.prompts import PROMPT
 from src.const.jx3.server import Server
+from src.utils.command import on_command
 from src.utils.database.operation import set_group_settings
 from src.utils.database.player import get_uid_data, submit_role_force
 from src.utils.permission import check_permission

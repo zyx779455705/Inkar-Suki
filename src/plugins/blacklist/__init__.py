@@ -1,9 +1,9 @@
 from jinja2 import Template
 
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, Bot
 from nonebot.params import CommandArg
 
+from src.utils.command import on_command
 from src.utils.database.operation import get_group_settings
 from src.utils.generate import generate
 from src.utils.time import Time

@@ -1,10 +1,10 @@
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
 from nonebot.params import CommandArg
 
 from src.config import Config
 from src.const.jx3.server import Server
 from src.const.prompts import PROMPT
+from src.utils.command import on_command
 from src.utils.permission import check_group_permission
 
 from .api import get_chat_records

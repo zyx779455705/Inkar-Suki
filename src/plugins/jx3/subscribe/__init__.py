@@ -1,8 +1,8 @@
-from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, Message
 
 from src.const.path import ASSETS, build_path
+from src.utils.command import on_command
 from src.utils.file import read
 from src.utils.database.operation import set_group_settings, get_group_settings
 

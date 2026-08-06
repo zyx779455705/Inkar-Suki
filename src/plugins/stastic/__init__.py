@@ -2,7 +2,6 @@ from typing import Any
 from jinja2 import Template
 from datetime import datetime
 
-from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import (
     Bot,
@@ -11,6 +10,7 @@ from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
 )
 
+from src.utils.command import on_command
 from src.utils.message import message_universal
 from src.utils.database import cache_db
 from src.utils.database.classes import GroupMessage, MemberMessage

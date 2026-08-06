@@ -2,7 +2,6 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from collections import Counter
 
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import (
     Message,
     GroupMessageEvent,
@@ -12,6 +11,7 @@ from nonebot.params import CommandArg
 
 from src.config import Config
 from src.const.path import CONST
+from src.utils.command import on_command
 from src.utils.time import Time
 from src.utils.network import Request
 from src.utils.generate import generate

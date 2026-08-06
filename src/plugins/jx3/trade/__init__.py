@@ -1,6 +1,5 @@
 from typing import Any
 
-from src.utils.command import on_command
 from nonebot.typing import T_State
 from nonebot.params import CommandArg, Arg
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, MessageSegment as ms
@@ -8,6 +7,7 @@ from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, MessageSegme
 from src.const.prompts import PROMPT
 from src.const.jx3.server import Server
 from src.config import Config
+from src.utils.command import on_command
 from src.utils.permission import check_permission, denied
 from src.utils.analyze import check_number
 from src.utils.typing import override

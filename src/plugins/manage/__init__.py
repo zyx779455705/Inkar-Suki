@@ -1,6 +1,5 @@
 from typing import Any
 
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
     MessageEvent,
@@ -16,6 +15,7 @@ from src.const.path import (
     CACHE,
     build_path
 )
+from src.utils.command import on_command
 from src.utils.network import Request
 from src.utils.time import Time
 from src.utils.permission import (
@@ -34,10 +34,10 @@ from src.utils.exceptions import ConnectTimeout
 from src.utils.message import message_universal
 
 from ._message import leave_msg
-from .developer import *  # noqa: F403
+from . import developer as _developer
 
 try:
-    from .auto_accept import *  # type: ignore  # noqa: F403
+    from . import auto_accept as _auto_accept  # type: ignore
     # 仅用于公共实例，个人实例如有需要可自行创建`auto_accept.py`并写入逻辑。
 except:  # noqa: E722
     pass

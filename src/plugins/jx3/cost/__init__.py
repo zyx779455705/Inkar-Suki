@@ -1,10 +1,10 @@
-from src.utils.command import on_command
 from nonebot.params import CommandArg, Arg
 from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
 
 from src.const.prompts import PROMPT
 from src.const.jx3.server import Server
+from src.utils.command import on_command
 from src.utils.analyze import check_number
 from src.utils.network import Request
 

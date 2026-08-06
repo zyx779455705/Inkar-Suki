@@ -1,4 +1,3 @@
-from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import (
     Message,
@@ -7,6 +6,8 @@ from nonebot.adapters.onebot.v11 import (
 
 from src.const.jx3.server import Server
 from src.const.prompts import PROMPT
+from src.utils.command import on_command
+
 from .api import get_role_info
 
 role_info_matcher = on_command("jx3_player", command_key="玩家", aliases={"玩家信息", "玩家"}, force_whitespace=True, priority=5)

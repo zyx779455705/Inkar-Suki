@@ -1,4 +1,3 @@
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
     Message,
@@ -9,6 +8,7 @@ from nonebot.typing import T_State
 
 from src.const.jx3.server import Server
 from src.const.prompts import PROMPT
+from src.utils.command import on_command
 from src.utils.database.player import search_player
 
 from .detail import VIEW_TYPES, get_exp_info

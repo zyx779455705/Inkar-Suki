@@ -1,6 +1,5 @@
 from typing import Any
 from jinja2 import Template
-from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 
@@ -9,6 +8,7 @@ from src.const.jx3.dungeon import Dungeon
 from src.const.jx3.kungfu import Kungfu
 from src.const.jx3.server import Server
 from src.const.jx3.school import School
+from src.utils.command import on_command
 from src.utils.database import rank_db as db
 from src.utils.database.classes import CQCRank, THRRank
 from src.utils.generate import generate

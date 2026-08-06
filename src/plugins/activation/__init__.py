@@ -1,10 +1,10 @@
 from typing import Any
 
 from nonebot import get_bots
-from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
 
+from src.utils.command import on_command
 from src.utils.analyze import check_number
 from src.utils.permission import check_permission
 from src.utils.nonebot_plugins import scheduler

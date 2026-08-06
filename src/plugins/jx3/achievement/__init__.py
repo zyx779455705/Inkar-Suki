@@ -1,4 +1,3 @@
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import (
     Message,
     GroupMessageEvent
@@ -8,6 +7,7 @@ from nonebot.params import CommandArg
 from src.const.prompts import PROMPT
 from src.const.jx3.server import Server
 from src.const.jx3.dungeon import Dungeon
+from src.utils.command import on_command
 
 from .v2 import (
     get_progress_v2,

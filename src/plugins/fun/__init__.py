@@ -4,7 +4,6 @@ import ast
 import html
 
 from nonebot import on_regex
-from src.utils.command import on_command
 from nonebot.params import CommandArg, RawCommand
 from nonebot.adapters.onebot.v11 import (
     Bot,
@@ -20,6 +19,7 @@ from src.const.path import (
     PLUGINS,
     build_path
 )
+from src.utils.command import on_command
 from src.utils.network import Request
 from src.utils.generate import generate
 from src.utils.analyze import check_number

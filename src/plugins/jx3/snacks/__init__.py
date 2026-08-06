@@ -1,12 +1,12 @@
 from pathlib import Path
 from jinja2 import Template
 
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
 from nonebot.params import CommandArg
 
 from src.const.jx3.kungfu import Kungfu
 from src.templates import HTMLSourceCode
+from src.utils.command import on_command
 from src.utils.generate import generate
 
 from ._template import template_table, table_head

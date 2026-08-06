@@ -1,4 +1,3 @@
-from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import (
     Message,
@@ -10,6 +9,7 @@ from src.config import Config
 from src.const.jx3.server import Server
 from src.const.prompts import PROMPT
 from src.const.path import SHOW
+from src.utils.command import on_command
 from src.utils.network import Request
 from src.utils.file import write
 from src.utils.permission import check_group_permission

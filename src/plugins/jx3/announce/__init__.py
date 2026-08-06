@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import (
     Message,
     GroupMessageEvent,
@@ -10,6 +9,7 @@ from nonebot.params import CommandArg
 
 from src.config import Config
 from src.const.path import ASSETS, build_path
+from src.utils.command import on_command
 from src.utils.network import Request
 
 import os

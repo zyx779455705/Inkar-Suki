@@ -1,6 +1,6 @@
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 
+from src.utils.command import on_command
 from src.utils.nonebot_plugins import scheduler
 from src.utils.database.operation import send_subscribe
 

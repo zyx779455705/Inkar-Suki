@@ -1,10 +1,10 @@
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
 from nonebot.params import CommandArg
 
 from src.const.jx3.kungfu import Kungfu
 from src.const.jx3.server import Server
 from src.const.prompts import PROMPT
+from src.utils.command import on_command
 from src.utils.analyze import check_number
 
 from .api import get_trial_dps, get_trial_rank

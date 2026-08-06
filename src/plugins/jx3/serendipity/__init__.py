@@ -1,12 +1,12 @@
 from typing import Any
 from datetime import datetime
 
-from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 
 from src.const.prompts import PROMPT
 from src.const.jx3.server import Server
+from src.utils.command import on_command
 from src.utils.database import serendipity_db
 from src.utils.database.classes import SerendipityData
 from src.plugins.preferences.app import Preference

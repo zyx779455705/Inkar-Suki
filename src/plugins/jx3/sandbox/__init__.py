@@ -1,4 +1,3 @@
-from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import (
     Message,
@@ -8,6 +7,7 @@ from nonebot.adapters.onebot.v11 import (
 from src.config import Config
 from src.const.jx3.server import Server
 from src.const.prompts import PROMPT
+from src.utils.command import on_command
 
 from .api import get_sandbox_image
 

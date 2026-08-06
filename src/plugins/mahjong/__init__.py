@@ -2,10 +2,10 @@ from pathlib import Path
 from dataclasses import dataclass
 
 from nonebot import on_message
-from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, MessageEvent, MessageSegment as ms
 
+from src.utils.command import on_command
 from src.utils.network import Request
 
 from .koromo import find_player, get_records, player_pt

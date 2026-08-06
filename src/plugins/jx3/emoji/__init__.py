@@ -1,7 +1,7 @@
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, MessageSegment as ms
 from nonebot.params import CommandArg
 
+from src.utils.command import on_command
 from src.utils.network import Request
 
 import random

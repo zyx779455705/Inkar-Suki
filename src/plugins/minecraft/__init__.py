@@ -1,6 +1,7 @@
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Message
 from nonebot.params import CommandArg
+
+from src.utils.command import on_command
 
 from .version import get_be_version, get_je_version
 from .server import get_bedrock_server, get_java_server

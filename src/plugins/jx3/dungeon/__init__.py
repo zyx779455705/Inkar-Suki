@@ -1,4 +1,3 @@
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 from nonebot.params import CommandArg
 
@@ -6,6 +5,7 @@ from src.config import Config
 from src.const.jx3.dungeon import Dungeon
 from src.const.prompts import PROMPT
 from src.const.jx3.server import Server
+from src.utils.command import on_command
 from src.utils.permission import check_group_permission, check_permission
 from src.utils.database.operation import get_group_settings
 

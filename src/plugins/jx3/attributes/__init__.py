@@ -1,6 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, cast
-from src.utils.command import on_command
 from nonebot.exception import ActionFailed
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import (
@@ -16,6 +15,7 @@ from nonebot.typing import T_State
 from src.const.jx3.kungfu import Kungfu
 from src.const.jx3.server import Server
 from src.const.prompts import PROMPT
+from src.utils.command import on_command
 from src.utils.network import Request
 from src.utils.analyze import check_number
 from src.utils.database import db, logs_db

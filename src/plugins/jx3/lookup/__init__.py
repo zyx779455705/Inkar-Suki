@@ -1,7 +1,7 @@
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
 from nonebot.params import CommandArg
 
+from src.utils.command import on_command
 from src.utils.analyze import check_number
 
 from .api import get_daren_count, get_tieba_records

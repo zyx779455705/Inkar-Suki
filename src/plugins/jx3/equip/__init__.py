@@ -1,4 +1,3 @@
-from src.utils.command import on_command
 from nonebot.adapters import Message
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment as ms
@@ -7,6 +6,7 @@ from nonebot.typing import T_State
 
 from src.const.prompts import PROMPT
 from src.const.jx3.kungfu import Kungfu
+from src.utils.command import on_command
 from src.utils.analyze import check_number
 
 from .equip_config import get_equips, get_equip_image

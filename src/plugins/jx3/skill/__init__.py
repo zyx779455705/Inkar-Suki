@@ -1,9 +1,9 @@
-from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 
 from src.const.prompts import PROMPT
 from src.const.jx3.kungfu import Kungfu
+from src.utils.command import on_command
 
 from .macro import get_macro
 from .martix import get_matrix

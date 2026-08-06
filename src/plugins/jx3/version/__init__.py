@@ -1,6 +1,7 @@
-from src.utils.command import on_command
 from nonebot.params import RawCommand, CommandArg
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
+
+from src.utils.command import on_command
 
 from .api import get_latest_version
 

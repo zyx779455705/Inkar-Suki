@@ -2,7 +2,6 @@ from typing import Any
 from random import randint
 
 from nonebot import on_notice, on_request
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import (
     Bot, 
     Message,
@@ -17,6 +16,7 @@ from nonebot.adapters.onebot.v11 import (
 from nonebot.params import CommandArg
 
 from src.config import Config
+from src.utils.command import on_command
 from src.utils.network import Request
 from src.utils.permission import check_permission, denied
 from src.utils.database import db

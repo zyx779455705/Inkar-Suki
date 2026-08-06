@@ -1,7 +1,6 @@
 from typing import Literal, Any
 from jinja2 import Template
 
-from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import (
     Message,
     GroupMessageEvent,
@@ -12,6 +11,7 @@ from nonebot.params import CommandArg, ArgPlainText
 
 from src.accounts.manage import AccountManage, CheckinRewards
 from src.const.prompts import PROMPT
+from src.utils.command import on_command
 from src.utils.analyze import sort_dict_list
 from src.utils.database.classes import Account
 from src.utils.database import db
