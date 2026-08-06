@@ -1,6 +1,6 @@
 from typing import Any
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, MessageSegment as ms
 
@@ -27,7 +27,7 @@ def parse_role_names(input_str: str) -> list[str]:
     result = [item.strip() for item in result if item.strip()]
     return extracted_items + result
 
-personal_bind_matcher = on_command("绑定角色", priority=5, force_whitespace=True)
+personal_bind_matcher = on_command("绑定角色", command_key=None, priority=5, force_whitespace=True)
 
 @personal_bind_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
@@ -49,10 +49,10 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
         if server is None:
             await personal_bind_matcher.finish(PROMPT.ServerNotExist)
     parsed_roles = [parse_role_name(name, server) for name in roles]
-    msg = RoleBind(event.user_id, parsed_roles).bind()
+    msg = await RoleBind(event.user_id, parsed_roles).bind()
     await personal_bind_matcher.finish(msg)
 
-personal_unbind_matcher = on_command("解绑角色", priority=5, force_whitespace=True)
+personal_unbind_matcher = on_command("解绑角色", command_key=None, priority=5, force_whitespace=True)
 
 @personal_unbind_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
@@ -84,7 +84,7 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
         msg = RoleBind(event.user_id, parsed_roles).unbind(all=all)
         await personal_bind_matcher.finish(msg)
 
-all_personal_roles_matcher = on_command("角色列表", priority=5, force_whitespace=True)
+all_personal_roles_matcher = on_command("角色列表", command_key=None, priority=5, force_whitespace=True)
 
 @all_personal_roles_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):

@@ -1,4 +1,5 @@
-from nonebot import on_command, on_message
+from nonebot import on_message
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, PrivateMessageEvent
 from nonebot.exception import ActionFailed
 from nonebot.log import logger
@@ -30,7 +31,7 @@ def _group_id(event: TeamHealthMessageEvent) -> int | None:
     return event.group_id if isinstance(event, GroupMessageEvent) else None
 
 
-register_raid_team_matcher = on_command("注册团队", priority=5, force_whitespace=True)
+register_raid_team_matcher = on_command("注册团队", command_key=None, priority=5, force_whitespace=True)
 
 
 @register_raid_team_matcher.handle()
@@ -43,7 +44,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     )
 
 
-bind_raid_team_matcher = on_command("绑定团队", priority=5, force_whitespace=True)
+bind_raid_team_matcher = on_command("绑定团队", command_key=None, priority=5, force_whitespace=True)
 select_bind_kungfu_matcher = on_message(priority=10, block=False)
 
 
@@ -110,8 +111,8 @@ async def _(event: TeamHealthMessageEvent):
     await select_bind_kungfu_matcher.finish(msg)
 
 
-raid_team_manage_matcher = on_command("团队管理", priority=5, force_whitespace=True)
-confirm_delete_team_matcher = on_command("确认删除", priority=5, force_whitespace=True)
+raid_team_manage_matcher = on_command("团队管理", command_key=None, priority=5, force_whitespace=True)
+confirm_delete_team_matcher = on_command("确认删除", command_key=None, priority=5, force_whitespace=True)
 
 
 @raid_team_manage_matcher.handle()

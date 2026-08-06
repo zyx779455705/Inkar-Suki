@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, Bot
 from nonebot.params import CommandArg
@@ -11,7 +11,7 @@ from src.utils.message import message_universal
 
 from .process import Ban
 
-BanMatcher = on_command("ban", force_whitespace=True, priority=5)
+BanMatcher = on_command("ban", command_key=None, force_whitespace=True, priority=5)
 
 
 @BanMatcher.handle()
@@ -29,7 +29,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     await BanMatcher.finish(f"好的，{Config.bot_basic.bot_name}已经封禁({user_id})！")
 
 
-UnbanMatcher = on_command("unban", force_whitespace=True, priority=5)
+UnbanMatcher = on_command("unban", command_key=None, force_whitespace=True, priority=5)
 
 
 @UnbanMatcher.handle()

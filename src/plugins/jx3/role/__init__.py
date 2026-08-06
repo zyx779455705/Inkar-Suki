@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import (
     Message,
@@ -9,7 +9,7 @@ from src.const.jx3.server import Server
 from src.const.prompts import PROMPT
 from .api import get_role_info
 
-role_info_matcher = on_command("jx3_player", aliases={"玩家信息", "玩家"}, force_whitespace=True, priority=5)
+role_info_matcher = on_command("jx3_player", command_key="玩家", aliases={"玩家信息", "玩家"}, force_whitespace=True, priority=5)
 
 @role_info_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):

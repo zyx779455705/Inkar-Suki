@@ -1,6 +1,6 @@
 from typing import Any
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.typing import T_State
 from nonebot.params import CommandArg, Arg
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, MessageSegment as ms
@@ -39,7 +39,7 @@ class TradeServer(Server):
         return final_server
 
 
-auction_matcher = on_command("jx3_auction", aliases={"阵营拍卖", "拍卖"}, force_whitespace=True, priority=5)
+auction_matcher = on_command("jx3_auction", command_key="拍卖", aliases={"阵营拍卖", "拍卖"}, force_whitespace=True, priority=5)
 
 
 @auction_matcher.handle()
@@ -77,7 +77,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     await auction_matcher.finish(image)
         
 
-trade_matcher = on_command("jx3_trade_v3", aliases={"jx3_trade", "交易行", "交易行v2", "交易行v3"}, force_whitespace=True, priority=5)
+trade_matcher = on_command("jx3_trade_v3", command_key="交易行", aliases={"jx3_trade", "交易行", "交易行v2", "交易行v3"}, force_whitespace=True, priority=5)
 
 @trade_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -101,7 +101,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     msg = await instance.generate_image()
     await trade_matcher.finish(msg)
 
-trade_sl_matcher = on_command("jx3_trade_shilian_v3", aliases={"jx3_shilian", "交易行试炼", "交易行试炼v2", "交易行试炼v3"}, force_whitespace=True, priority=5)
+trade_sl_matcher = on_command("jx3_trade_shilian_v3", command_key="交易行", aliases={"jx3_shilian", "交易行试炼", "交易行试炼v2", "交易行试炼v3"}, force_whitespace=True, priority=5)
 
 @trade_sl_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -125,7 +125,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     image = await instance.generate_image()
     await trade_sl_matcher.finish(image)
 
-item_price_v2_matcher = on_command("jx3_item_v2", aliases={"物价v2", "物价"}, force_whitespace=True, priority=5)
+item_price_v2_matcher = on_command("jx3_item_v2", command_key="物价", aliases={"物价v2", "物价"}, force_whitespace=True, priority=5)
 
 @item_price_v2_matcher.handle()
 async def _(event: GroupMessageEvent, state: T_State, args: Message = CommandArg()):
@@ -176,7 +176,7 @@ async def _(event: GroupMessageEvent, state: T_State, num: Message = Arg()):
     img_content = Request(img).local_content
     await item_price_v2_matcher.finish(ms.image(img_content))
 
-wanbaolou_role_matcher = on_command("jx3_wbl", aliases={"万宝楼"}, priority=5, force_whitespace=True)
+wanbaolou_role_matcher = on_command("jx3_wbl", command_key="万宝楼", aliases={"万宝楼"}, priority=5, force_whitespace=True)
 
 @wanbaolou_role_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -188,7 +188,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     msg = await get_wbl_role(int(num))
     await wanbaolou_role_matcher.finish(msg)
 
-item_aliases_matcher = on_command("jx3_itemaliases", aliases={"物品别名", "物品别称"}, priority=5, force_whitespace=True)
+item_aliases_matcher = on_command("jx3_itemaliases", command_key=None, aliases={"物品别名", "物品别称"}, priority=5, force_whitespace=True)
 
 @item_aliases_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):

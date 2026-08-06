@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import (
     Message,
@@ -12,7 +12,7 @@ from src.utils.database.operation import get_group_settings
 
 from .api import get_firework_record
 
-firework_matcher = on_command("jx3_firework", aliases={"烟花"}, force_whitespace=True, priority=5)
+firework_matcher = on_command("jx3_firework", command_key="烟花", aliases={"烟花"}, force_whitespace=True, priority=5)
 
 @firework_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):

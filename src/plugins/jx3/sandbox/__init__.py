@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import (
     Message,
@@ -11,7 +11,7 @@ from src.const.prompts import PROMPT
 
 from .api import get_sandbox_image
 
-sandbox_matcher = on_command("jx3_sandbox_v2", aliases={"沙盘v2", "沙盘"}, force_whitespace=True, priority=5)
+sandbox_matcher = on_command("jx3_sandbox_v2", command_key="沙盘", aliases={"沙盘v2", "沙盘"}, force_whitespace=True, priority=5)
 
 @sandbox_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):

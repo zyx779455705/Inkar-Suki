@@ -7,7 +7,7 @@ from src.utils.generate import generate
 
 from src.templates import HTMLSourceCode
 
-from src.plugins.jx3.joy.random_item import item_colors as COLOR
+from src.plugins.jx3.fun.random_item import item_colors as COLOR
 
 import re
 

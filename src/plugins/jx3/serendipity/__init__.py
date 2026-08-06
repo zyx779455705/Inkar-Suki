@@ -1,7 +1,7 @@
 from typing import Any
 from datetime import datetime
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 
@@ -20,7 +20,7 @@ from .statistics import get_serendipity_statistics
 from .collect import get_serendipity_collect
 
 
-collect_serendipity_matcher = on_command("jx3_collect_serendipity", aliases={"奇遇汇总", "汇总"}, force_whitespace=True, priority=5)
+collect_serendipity_matcher = on_command("jx3_collect_serendipity", command_key="奇遇", aliases={"奇遇汇总", "汇总"}, force_whitespace=True, priority=5)
 
 
 @collect_serendipity_matcher.handle()
@@ -52,7 +52,7 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
     await collect_serendipity_matcher.finish(image)
 
 
-statistics_serendipity_matcher = on_command("jx3_statistics_serendipity", aliases={"奇遇统计", "统计"}, force_whitespace=True, priority=5)
+statistics_serendipity_matcher = on_command("jx3_statistics_serendipity", command_key="奇遇", aliases={"奇遇统计", "统计"}, force_whitespace=True, priority=5)
 
 
 @statistics_serendipity_matcher.handle()
@@ -74,7 +74,7 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
     await statistics_serendipity_matcher.finish(image)
 
 
-recent_serendipity_matcher = on_command("jx3_recent_serendipity", aliases={"近期奇遇"}, force_whitespace=True, priority=5)
+recent_serendipity_matcher = on_command("jx3_recent_serendipity", command_key="奇遇", aliases={"近期奇遇"}, force_whitespace=True, priority=5)
 
 
 @recent_serendipity_matcher.handle()
@@ -86,7 +86,7 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
     image = await get_recent_serendipity(server)
     await recent_serendipity_matcher.finish(image)
 
-serendipity_matcher = on_command("jx3_serendipity", aliases={"查询", "奇遇"}, force_whitespace=True, priority=5)
+serendipity_matcher = on_command("jx3_serendipity", command_key="奇遇", aliases={"查询", "奇遇"}, force_whitespace=True, priority=5)
 
 @serendipity_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
@@ -119,7 +119,7 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
         data = await v3_serendipity(server, name)
     await serendipity_matcher.finish(data)
 
-serendipity_v2_matcher = on_command("jx3_serendipity_v2", aliases={"奇遇v2", "查询v2"}, force_whitespace=True, priority=5)
+serendipity_v2_matcher = on_command("jx3_serendipity_v2", command_key="奇遇", aliases={"奇遇v2", "查询v2"}, force_whitespace=True, priority=5)
 
 @serendipity_v2_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
@@ -146,7 +146,7 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
     data = await v2_serendipity(server, name, True)
     await serendipity_v2_matcher.finish(data)
 
-serendipity_v3_matcher = on_command("jx3_serendipity_v3", aliases={"奇遇v3", "查询v3"}, force_whitespace=True, priority=5)
+serendipity_v3_matcher = on_command("jx3_serendipity_v3", command_key="奇遇", aliases={"奇遇v3", "查询v3"}, force_whitespace=True, priority=5)
 
 @serendipity_v3_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
@@ -173,7 +173,7 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
     data = await v3_serendipity(server, id)
     await serendipity_v3_matcher.finish(data)
 
-serendipity_v4_matcher = on_command("jx3_serendipity_v4", aliases={"奇遇v4", "查询v4"}, force_whitespace=True, priority=5)
+serendipity_v4_matcher = on_command("jx3_serendipity_v4", command_key="奇遇", aliases={"奇遇v4", "查询v4"}, force_whitespace=True, priority=5)
 
 @serendipity_v4_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
@@ -189,7 +189,7 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
     data = await v4_serendipity(server, name)
     await serendipity_v4_matcher.finish(data)
 
-pet_serendipity_matcher = on_command("jx3_pet_serendipity", aliases={"宠物奇遇"}, force_whitespace=True, priority=5)
+pet_serendipity_matcher = on_command("jx3_pet_serendipity", command_key="奇遇", aliases={"宠物奇遇"}, force_whitespace=True, priority=5)
 
 @pet_serendipity_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
@@ -221,7 +221,7 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
     data = await v2_serendipity(server, name, False)
     await pet_serendipity_matcher.finish(data)
 
-preposition_matcher = on_command("jx3_preposition", aliases={"前置", "攻略"}, force_whitespace=True, priority=5)
+preposition_matcher = on_command("jx3_preposition", command_key="奇遇", aliases={"前置", "攻略"}, force_whitespace=True, priority=5)
 
 @preposition_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -234,7 +234,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     else:
         await preposition_matcher.finish(data)
     
-submit_serendipity_matcher = on_command("jx3_submit_serendipity_time", aliases={"奇遇时间"}, force_whitespace=True, priority=5)
+submit_serendipity_matcher = on_command("jx3_submit_serendipity_time", command_key=None, aliases={"奇遇时间"}, force_whitespace=True, priority=5)
 
 @submit_serendipity_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):

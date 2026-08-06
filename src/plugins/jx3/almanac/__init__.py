@@ -2,7 +2,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from collections import Counter
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import (
     Message,
     GroupMessageEvent,
@@ -37,7 +37,7 @@ def most_common_element(elements: list[str]) -> str:
     else:
         return "通用"
 
-almanac_matcher = on_command("jx3_almanac", aliases={"剑三黄历"}, priority=5)
+almanac_matcher = on_command("jx3_almanac", command_key="剑三黄历", aliases={"剑三黄历"}, priority=5)
 
 @almanac_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -67,7 +67,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
                 msg = f"{words} 对应五行：\n" + "|".join(words_attr) + f"\n参考属性：{ref_attr}\n" + image + "数据来自小红书【剑三黄历】欢迎关注！"
                 await almanac_matcher.finish(msg)
 
-almanac_image_matcher = on_command("jx3_almanac_image", aliases={"黄历图片生成"}, priority=5)
+almanac_image_matcher = on_command("jx3_almanac_image", command_key=None, aliases={"黄历图片生成"}, priority=5)
 
 @almanac_image_matcher.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):

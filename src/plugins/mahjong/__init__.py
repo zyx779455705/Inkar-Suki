@@ -1,7 +1,8 @@
 from pathlib import Path
 from dataclasses import dataclass
 
-from nonebot import on_command, on_message
+from nonebot import on_message
+from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, MessageEvent, MessageSegment as ms
 
@@ -52,7 +53,7 @@ def _is_tenpai_answer_candidate(answer: str) -> bool:
     normalized_answer = answer.strip().lower().replace(" ", "")
     return normalized_answer in TENPAI_NOTEN_ANSWERS or parse_tiles(answer) is not None
 
-MSSearchPlayerMatcher = on_command("mssp", priority=5, force_whitespace=True)
+MSSearchPlayerMatcher = on_command("mssp", command_key="mssp", priority=5, force_whitespace=True)
 
 @MSSearchPlayerMatcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -62,7 +63,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     await MSSearchPlayerMatcher.finish(data)
 
 
-MSGameRecordMatcher = on_command("msgr", priority=5, force_whitespace=True)
+MSGameRecordMatcher = on_command("msgr", command_key="msgr", priority=5, force_whitespace=True)
 
 @MSGameRecordMatcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -72,7 +73,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     await MSGameRecordMatcher.finish(data)
 
 
-MSGetPTMatcher = on_command("mspt", priority=5, force_whitespace=True)
+MSGetPTMatcher = on_command("mspt", command_key="mspt", priority=5, force_whitespace=True)
 
 @MSGetPTMatcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -81,7 +82,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     data = await player_pt(args.extract_plain_text())
     await MSGetPTMatcher.finish(data)
 
-MSMonthReport = on_command("msmr", priority=5, force_whitespace=True)
+MSMonthReport = on_command("msmr", command_key="msmr", priority=5, force_whitespace=True)
 
 @MSMonthReport.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -103,7 +104,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await MSMonthReport.finish(image)
 
 
-GuessTenpaiMatcher = on_command("猜听牌", priority=5, force_whitespace=True)
+GuessTenpaiMatcher = on_command("猜听牌", command_key="猜听牌", priority=5, force_whitespace=True)
 GuessTenpaiAnswerMatcher = on_message(priority=6, block=False)
 
 

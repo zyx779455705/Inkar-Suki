@@ -1,6 +1,7 @@
 from typing import Any
 
-from nonebot import on_command, get_bots
+from nonebot import get_bots
+from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
 
@@ -13,7 +14,7 @@ from src.utils.time import Time
 
 from .app import get_expire_at, update_expire_time, is_within_48_hours
 
-expire_at = on_command("查看授权", priority=5, force_whitespace=True)
+expire_at = on_command("查看授权", command_key=None, priority=5, force_whitespace=True)
 
 
 @expire_at.handle()
@@ -23,7 +24,7 @@ async def _(event: GroupMessageEvent):
     await expire_at.finish(msg)
 
 
-update_activation = on_command("授权", priority=5, force_whitespace=True)
+update_activation = on_command("授权", command_key=None, priority=5, force_whitespace=True)
 
 
 @update_activation.handle()

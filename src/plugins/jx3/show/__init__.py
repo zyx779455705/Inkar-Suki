@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import (
     Message,
@@ -21,7 +21,7 @@ def cache_show(image_bytes: bytes, name: str, server: str) -> None:
     path = SHOW + f"/{name}·{server}.png"
     write(path, image_bytes, "wb")
 
-show_matcher = on_command("jx3_show", aliases={"名片", "qq秀", "QQ秀", "名片秀"}, force_whitespace=True, priority=5)
+show_matcher = on_command("jx3_show", command_key="名片", aliases={"名片", "qq秀", "QQ秀", "名片秀"}, force_whitespace=True, priority=5)
 
 @show_matcher.handle()
 async def _(event: GroupMessageEvent, full_argument: Message = CommandArg()):

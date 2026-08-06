@@ -1,6 +1,6 @@
 from functools import reduce
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent, MessageSegment as ms
 from nonebot.params import CommandArg
 
@@ -12,7 +12,7 @@ from .app import Assistance, parse_limit, get_yzk_answer, get_gyc_answer
 
 AssistanceInstance = Assistance()
 
-create_team_matcher = on_command("创建团队", force_whitespace=True, priority=5)
+create_team_matcher = on_command("创建团队", command_key=None, force_whitespace=True, priority=5)
 
 @create_team_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
@@ -33,7 +33,7 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
         resp = AssistanceInstance.create_group(str(event.group_id), team_name, str(event.user_id), team_limit)
     await create_team_matcher.finish(resp)
 
-book_team_matcher = on_command("预定", aliases={"预订", "报名"}, force_whitespace=True, priority=5)
+book_team_matcher = on_command("预定", command_key=None, aliases={"预订", "报名"}, force_whitespace=True, priority=5)
 
 @book_team_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -59,7 +59,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     final_resp = ms.at(event.user_id) + " " + str(resp)
     await book_team_matcher.finish(final_resp)
 
-cancel_team_matcher = on_command("取消预定", aliases={"取消预订", "取消报名"}, force_whitespace=True, priority=5)
+cancel_team_matcher = on_command("取消预定", command_key=None, aliases={"取消预订", "取消报名"}, force_whitespace=True, priority=5)
 
 @cancel_team_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -84,7 +84,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     final_resp = ms.at(event.user_id) + " " + str(resp)
     await cancel_team_matcher.finish(final_resp)
 
-dissolve_team_matcher = on_command("解散团队", aliases={"取消开团", "结束团队"}, force_whitespace=True, priority=5)
+dissolve_team_matcher = on_command("解散团队", command_key=None, aliases={"取消开团", "结束团队"}, force_whitespace=True, priority=5)
 
 @dissolve_team_matcher.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
@@ -103,7 +103,7 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     final_resp = ms.at(event.user_id) + " " + str(resp)
     await dissolve_team_matcher.finish(final_resp)
 
-dissolve_all_team_matcher = on_command("解散所有团队", aliases={"结束所有团队", "解散全部团队", "结束全部团队"}, force_whitespace=True, priority=5)
+dissolve_all_team_matcher = on_command("解散所有团队", command_key=None, aliases={"结束所有团队", "解散全部团队", "结束全部团队"}, force_whitespace=True, priority=5)
 
 @dissolve_all_team_matcher.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
@@ -116,7 +116,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     final_resp = ms.at(event.user_id) + " " + str(resp)
     await dissolve_all_team_matcher.finish(final_resp)
 
-lookup_team_matcher = on_command("查看团队", priority=5, force_whitespace=True)
+lookup_team_matcher = on_command("查看团队", command_key=None, priority=5, force_whitespace=True)
 
 @lookup_team_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -132,7 +132,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     image = await AssistanceInstance.generate_html(str(event.group_id), keyword, "新版团队排序" in additions)
     await lookup_team_matcher.finish(image)
 
-lookup_all_team_matcher = on_command("查看全部团队", aliases={"查看所有团队"}, priority=5, force_whitespace=True)
+lookup_all_team_matcher = on_command("查看全部团队", command_key=None, aliases={"查看所有团队"}, priority=5, force_whitespace=True)
 
 @lookup_all_team_matcher.handle()
 async def _(event: GroupMessageEvent):
@@ -144,7 +144,7 @@ async def _(event: GroupMessageEvent):
         reduce(lambda a, b: a + b, images)
     )
 
-teamlist_matcher = on_command("团队列表", priority=5, force_whitespace=True)
+teamlist_matcher = on_command("团队列表", command_key=None, priority=5, force_whitespace=True)
 
 @teamlist_matcher.handle()
 async def _(event: GroupMessageEvent):
@@ -171,7 +171,7 @@ async def _(event: GroupMessageEvent):
         msg += "【" + str(i + 1) + "】" + name + "\n创建者：" + leader + "\n职业限制：" + limit + "\n"
     await teamlist_matcher.finish(msg[:-1])
 
-share_team_matcher = on_command("共享团队", priority=5, force_whitespace=True)
+share_team_matcher = on_command("共享团队", command_key=None, priority=5, force_whitespace=True)
 
 @share_team_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
@@ -190,7 +190,7 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
         await share_team_matcher.finish("共享团队失败！请检查源群是否有该团队，以及是否为您创建，关键词是否正确，然后重试！")
     await share_team_matcher.finish("已共享团队至本群！")
 
-modify_limit_matcher = on_command("修改团队限制", priority=5, force_whitespace=True)
+modify_limit_matcher = on_command("修改团队限制", command_key=None, priority=5, force_whitespace=True)
 
 @modify_limit_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
@@ -214,14 +214,14 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
             await modify_limit_matcher.finish("修改限制成功，下次报名将会检查是否满足该限制！")
     await modify_limit_matcher.finish("未找到该序号/关键词且为您创建的团队，请检查后重试！")
 
-yzk_unsecret_matcher = on_command("解密", aliases={"解谜", "揭秘"}, priority=5)
+yzk_unsecret_matcher = on_command("解密", command_key="解密", aliases={"解谜", "揭秘"}, priority=5)
 
 @yzk_unsecret_matcher.handle()
 async def _(event: GroupMessageEvent):
     msg = get_yzk_answer()
     await yzk_unsecret_matcher.finish(msg)
 
-gyc_unsecret_matcher = on_command("报点", priority=5)
+gyc_unsecret_matcher = on_command("报点", command_key="报点", priority=5)
 
 @gyc_unsecret_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):

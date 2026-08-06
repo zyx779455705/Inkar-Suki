@@ -81,7 +81,7 @@ class PersonalSetting(BaseModel):
     calculate_source: str = "公用"
     income: str = "无增益"
     formation: str = "无阵眼"
-    random_loot_display: str = "纵向"
+    random_loot_display: str = "横向"
 
 class PersonalSettings(LiteModel):
     TABLE_NAME: ClassVar[str] = "personal_settings"
@@ -212,6 +212,13 @@ class EquipReplacementLog(LiteModel):
     user_id: int = 0
     message: str = ""
     global_role_id: int = 0
+
+
+class CommandUsage(LiteModel):
+    TABLE_NAME: ClassVar[str] = "command_usage"
+    command_key: str = ""
+    timestamp: int = 0
+
 
 class RandomImageRecord(LiteModel):
     TABLE_NAME: ClassVar[str] = "random_image_record"

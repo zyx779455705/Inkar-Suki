@@ -1,7 +1,7 @@
 import asyncio
 
 from jinja2 import Template
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent, Bot
 from nonebot.params import CommandArg, Arg
 from nonebot.typing import T_State
@@ -17,7 +17,7 @@ from ._template import interwiki_table_head, interwiki_table_row
 from .wikilib import wiki as wiki_
 
 
-SimpleWikiMatcher = on_command("wiki", aliases={"iwiki"}, force_whitespace=True, priority=5)
+SimpleWikiMatcher = on_command("wiki", command_key="wiki", aliases={"iwiki"}, force_whitespace=True, priority=5)
 
 
 @SimpleWikiMatcher.handle()
@@ -72,7 +72,7 @@ async def _(event: GroupMessageEvent, state: T_State, args: Message = CommandArg
         await SimpleWikiMatcher.finish(info["reason"])
 
 
-StartWikiMatcher = on_command("startwiki", force_whitespace=True, priority=5)
+StartWikiMatcher = on_command("startwiki", command_key="startwiki", force_whitespace=True, priority=5)
 
 
 @StartWikiMatcher.handle()
@@ -87,7 +87,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     await StartWikiMatcher.finish(f"当前起始Wiki：{site_name}\n首页：{home_page}")
 
 
-WikiHelpMatcher = on_command("wikihelp", force_whitespace=True, priority=5)
+WikiHelpMatcher = on_command("wikihelp", command_key=None, force_whitespace=True, priority=5)
 
 
 @WikiHelpMatcher.handle()
@@ -106,7 +106,7 @@ async def _(args: Message = CommandArg()):
         "interwiki upd <前缀> <Wiki页面链接>：更新自定义Wiki"
     )
 
-SetWikiMatcher = on_command("setwiki", force_whitespace=True, priority=5)
+SetWikiMatcher = on_command("setwiki", command_key="setwiki", force_whitespace=True, priority=5)
 
 
 @SetWikiMatcher.handle()
@@ -137,7 +137,7 @@ def check_interwiki_prefix(group, prefix):
     return False
 
 
-InterWikiManageMatcher = on_command("interwiki", aliases={"iw"}, force_whitespace=True, priority=5)
+InterWikiManageMatcher = on_command("interwiki", command_key="interwiki", aliases={"iw"}, force_whitespace=True, priority=5)
 
 
 @InterWikiManageMatcher.handle()

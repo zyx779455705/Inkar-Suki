@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters import Message
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment as ms
@@ -13,7 +13,7 @@ from .equip_config import get_equips, get_equip_image
 from .equip_find import get_equip_info, get_equip_info_image
 from .enchant_find import get_enchant_list
 
-referenced_equip_matcher = on_command("jx3_pz", aliases={"配装"}, force_whitespace=True, priority=5)
+referenced_equip_matcher = on_command("jx3_pz", command_key="配装", aliases={"配装"}, force_whitespace=True, priority=5)
 
 @referenced_equip_matcher.handle()
 async def _(event: GroupMessageEvent, state: T_State, full_argument: Message = CommandArg()):
@@ -58,7 +58,7 @@ async def _(event: GroupMessageEvent, state: T_State, num: Message = Arg()):
         image = ms.image(await get_equip_image(equip_id))
         await referenced_equip_matcher.finish(image)
 
-equip_find_matcher = on_command("jx3_equip_find", aliases={"装备"}, priority=5, force_whitespace=True)
+equip_find_matcher = on_command("jx3_equip_find", command_key="装备", aliases={"装备"}, priority=5, force_whitespace=True)
 
 @equip_find_matcher.handle()
 async def _(matcher: Matcher, state: T_State, event: GroupMessageEvent, args: Message = CommandArg()):
@@ -104,7 +104,7 @@ async def _(state: T_State, event: GroupMessageEvent, num: Message = Arg()):
     image = await get_equip_info_image(equip_data)
     await equip_find_matcher.finish(image)
 
-enchant_find_matcher = on_command("jx3_enchant_find", aliases={"附魔"}, priority=5, force_whitespace=True)
+enchant_find_matcher = on_command("jx3_enchant_find", command_key="附魔", aliases={"附魔"}, priority=5, force_whitespace=True)
 
 @enchant_find_matcher.handle()
 async def _(matcher: Matcher, state: T_State, event: GroupMessageEvent, args: Message = CommandArg()):

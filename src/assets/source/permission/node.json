@@ -7,6 +7,10 @@
                 {
                     "name": "ping.detail",
                     "desc": "查看 ping 的机器人统计信息"
+                },
+                {
+                    "name": "statistics.command",
+                    "desc": "查看命令调用统计信息"
                 }
             ]
         },
@@ -146,7 +150,7 @@
                 },
                 {
                     "name": "dungeon.zones.list",
-                    "desc": "查询个人绑定角色的副本记录列表"
+                    "desc": "一次查询超过 5 个个人绑定角色的副本记录列表"
                 },
                 {
                     "name": "attribute.sync",

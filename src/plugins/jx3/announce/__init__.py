@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import (
     Message,
     GroupMessageEvent,
@@ -16,7 +16,7 @@ import os
 
 from .image import get_image
 
-announce_matcher = on_command("jx3_announce", aliases={"维护公告", "更新公告", "公告", "更新"}, force_whitespace=True, priority=5)
+announce_matcher = on_command("jx3_announce", command_key="公告", aliases={"维护公告", "更新公告", "公告", "更新"}, force_whitespace=True, priority=5)
 
 @announce_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -35,7 +35,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         img = await get_image()
         await announce_matcher.finish(img)
 
-beta_announce_matcher = on_command("jx3_beta_announce", aliases={"体服公告", "体服更新"}, priority=5, force_whitespace=True)
+beta_announce_matcher = on_command("jx3_beta_announce", command_key="公告", aliases={"体服公告", "体服更新"}, priority=5, force_whitespace=True)
 
 @beta_announce_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -47,7 +47,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     img = await get_image(ver="latest_exp")
     await beta_announce_matcher.finish(img)
 
-skill_change_matcher = on_command("jx3_skillrecord", aliases={"技改", "技改记录"}, priority=5, force_whitespace=True)
+skill_change_matcher = on_command("jx3_skillrecord", command_key="技改", aliases={"技改", "技改记录"}, priority=5, force_whitespace=True)
 
 @skill_change_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):

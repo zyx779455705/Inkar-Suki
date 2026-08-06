@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
 from nonebot.params import CommandArg
 
@@ -15,7 +15,7 @@ def group_server_bind(group_id: str, server: str | None) -> None:
     else:
         set_group_settings(group_id, "server", "")
 
-server_bind_matcher = on_command("jx3_bind", aliases={"绑定", "绑定区服"}, force_whitespace=True, priority=5)
+server_bind_matcher = on_command("jx3_bind", command_key=None, aliases={"绑定", "绑定区服"}, force_whitespace=True, priority=5)
 
 @server_bind_matcher.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
@@ -36,7 +36,7 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
         return
     await server_bind_matcher.finish("绑定成功！\n当前区服为：" + exact_server)
 
-role_check_matcher = on_command("jx3_checkrole", aliases={"提交角色"}, priority=5, force_whitespace=True)
+role_check_matcher = on_command("jx3_checkrole", command_key=None, aliases={"提交角色"}, priority=5, force_whitespace=True)
 
 @role_check_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):

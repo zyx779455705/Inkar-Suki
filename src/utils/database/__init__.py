@@ -22,6 +22,7 @@ from src.utils.database.classes import (
     GroupMessage,
     RandomAffectionRecord,
     EquipReplacementLog,
+    CommandUsage,
     RandomImageRecord
 )
 
@@ -77,5 +78,6 @@ logs_db = Database(build_path(DATA, ["logs.db"]))
 
 logs_db.auto_migrate(
     EquipReplacementLog(),
+    CommandUsage(),
     RandomImageRecord()
 )

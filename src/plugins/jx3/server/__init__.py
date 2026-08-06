@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 
@@ -7,7 +7,7 @@ from src.const.jx3.server import Server
 
 from .api import get_server_status
 
-server_matcher = on_command("jx3_server", aliases={"开服"}, priority=5, force_whitespace=True)
+server_matcher = on_command("jx3_server", command_key="开服", aliases={"开服"}, priority=5, force_whitespace=True)
 
 @server_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):

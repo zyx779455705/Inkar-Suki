@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 
 from src.utils.nonebot_plugins import scheduler
@@ -8,7 +8,7 @@ from .api import get_daily_info
 
 import datetime
 
-daily_matcher = on_command("jx3_daily", aliases={"日常"}, force_whitespace=True, priority=5)
+daily_matcher = on_command("jx3_daily", command_key="日常", aliases={"日常"}, force_whitespace=True, priority=5)
 @daily_matcher.handle()
 async def _(event: GroupMessageEvent):
     msg = await get_daily_info()

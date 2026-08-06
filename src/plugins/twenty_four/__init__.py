@@ -1,6 +1,6 @@
 import random
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Message, MessageEvent
 from nonebot.params import CommandArg, Received
 from nonebot.typing import T_State
@@ -15,7 +15,7 @@ from .process import (
 )
 
 
-TwentyFourMatcher = on_command("twentyFour", aliases={"24点"}, force_whitespace=True, priority=5)
+TwentyFourMatcher = on_command("twentyFour", command_key="24点", aliases={"24点"}, force_whitespace=True, priority=5)
 
 
 @TwentyFourMatcher.handle()

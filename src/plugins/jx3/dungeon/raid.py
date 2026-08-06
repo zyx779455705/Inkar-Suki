@@ -13,8 +13,8 @@ from ._template import (
 )
 
 
-async def get_raid_record_image(server: str, role_name: str):
-    payload = (
+async def get_raid_records(server: str, role_name: str) -> dict:
+    return (
         await Request(
             f"{Config.jx3.api.url}/raid/records",
             params={
@@ -24,6 +24,10 @@ async def get_raid_record_image(server: str, role_name: str):
             },
         ).get()
     ).json()
+
+
+async def get_raid_record_image(server: str, role_name: str):
+    payload = await get_raid_records(server, role_name)
     records = payload.get("data")
     if payload.get("code") != 200 or not isinstance(records, list):
         return payload.get("msg") or "副本记录查询失败，请稍后重试！"

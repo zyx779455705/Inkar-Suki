@@ -1,6 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, cast
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.exception import ActionFailed
 from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import (
@@ -37,7 +37,7 @@ from .v2_remake import get_attr_v2_remake, get_attr_v2_remake_build, get_attr_v2
 from .v4 import get_attr_v4
 from .equip_replace import EQUIP_LOCATION, replace_enchant_in_equip_lines
 
-attribute_matcher = on_command("jx3_attribute", aliases={"属性", "查装"}, force_whitespace=True, priority=5)
+attribute_matcher = on_command("jx3_attribute", command_key="属性", aliases={"属性", "查装"}, force_whitespace=True, priority=5)
 
 SPECIAL_PVE_KUNGFU_TAGS = {
     10014: "QCPVE",
@@ -71,6 +71,7 @@ async def finish_attribute_response(matcher: type[Matcher], data: Any) -> None:
 
 delete_equipment_matcher = on_command(
     "jx3_delete_equipment",
+    command_key=None,
     aliases={"删除装备"},
     force_whitespace=True,
     priority=5,
@@ -163,7 +164,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         data = await get_attr_v2_remake(server, role_name, segment=True)
     await finish_attribute_response(attribute_matcher, data)
 
-attribute_v2remake_matcher = on_command("jx3_addritube_v2_remake", aliases={"属性v2r", "查装v2r"}, force_whitespace=True, priority=5)
+attribute_v2remake_matcher = on_command("jx3_addritube_v2_remake", command_key="属性", aliases={"属性v2r", "查装v2r"}, force_whitespace=True, priority=5)
 
 @attribute_v2remake_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -184,7 +185,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     data = await get_attr_v2_remake(server, role, segment=True)
     await finish_attribute_response(attribute_v2remake_matcher, data)
 
-attribute_v4_matcher = on_command("jx3_addritube_v4", aliases={"属性v4", "查装v4"}, force_whitespace=True, priority=5)
+attribute_v4_matcher = on_command("jx3_addritube_v4", command_key="属性", aliases={"属性v4", "查装v4"}, force_whitespace=True, priority=5)
 
 @attribute_v4_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -216,7 +217,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     data = await get_attr_v4(server, role_name, tags)
     await finish_attribute_response(attribute_v4_matcher, data)
 
-attribute_repo = on_command("jx3_attribute_repo", aliases={"属性库"}, priority=5, force_whitespace=True)
+attribute_repo = on_command("jx3_attribute_repo", command_key="属性", aliases={"属性库"}, priority=5, force_whitespace=True)
 
 @attribute_repo.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -228,7 +229,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     image = await get_attr_v2_remake_global(int(num))
     await finish_attribute_response(attribute_repo, image)
 
-attribute_build = on_command("jx3_attribute_build", aliases={"配装器"}, priority=5, force_whitespace=True)
+attribute_build = on_command("jx3_attribute_build", command_key="配装器", aliases={"配装器"}, priority=5, force_whitespace=True)
 
 @attribute_build.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -333,7 +334,7 @@ async def format_attribute_submit_success(role_info: RoleData, kungfu_id: int) -
         message += "\n暂时无法确认该心法是否支持装备评级，请稍后使用 装备评级支持 查询。"
     return message
 
-attribute_submit = on_command("jx3_attribute_submit", aliases={"提交属性"}, priority=5, force_whitespace=True)
+attribute_submit = on_command("jx3_attribute_submit", command_key=None, aliases={"提交属性"}, priority=5, force_whitespace=True)
 
 @attribute_submit.handle()
 async def _(event: GroupMessageEvent, state: T_State, matcher: Matcher, msg: Message = CommandArg()):
@@ -451,7 +452,7 @@ def _format_replace_equip_selection(equips: list[EquipInfo]) -> str:
     return reply_msg
 
 
-replace_equip_matcher = on_command("jx3_attribute_replace_equip", aliases={"替换装备", "装备替换"}, priority=5, force_whitespace=True)
+replace_equip_matcher = on_command("jx3_attribute_replace_equip", command_key=None, aliases={"替换装备", "装备替换"}, priority=5, force_whitespace=True)
 
 @replace_equip_matcher.handle()
 async def _(event: GroupMessageEvent, state: T_State, matcher: Matcher, msg: Message = CommandArg()):
@@ -548,7 +549,7 @@ async def _(event: GroupMessageEvent, matcher: Matcher, state: T_State, num: Mes
     current_data.save()
     await replace_equip_matcher.finish(f"已替换为 {equip.name}，请尝试使用 属性 命令查询效果！")
 
-replace_enchant_matcher = on_command("jx3_attribute_replace_enchant", aliases={"替换附魔"}, priority=5, force_whitespace=True)
+replace_enchant_matcher = on_command("jx3_attribute_replace_enchant", command_key=None, aliases={"替换附魔"}, priority=5, force_whitespace=True)
 
 @replace_enchant_matcher.handle()
 async def _(event: GroupMessageEvent, state: T_State, matcher: Matcher, msg: Message = CommandArg()):

@@ -1,7 +1,7 @@
 from typing import Literal, Any
 from jinja2 import Template
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import (
     Message,
     GroupMessageEvent,
@@ -25,7 +25,7 @@ from ._template import template_body, table_head
 
 import random
 
-LotMatcher = on_command("抽签", force_whitespace=True, priority=5)
+LotMatcher = on_command("抽签", command_key="抽签", force_whitespace=True, priority=5)
 
 @LotMatcher.handle()
 async def lq_(args: Message = CommandArg()):
@@ -60,7 +60,7 @@ async def pq_(reply: str = ArgPlainText("pb")):
     else:
         await LotMatcher.finish("\n放弃了抽取",at_sender=True,)
 
-CheckinMatcher = on_command("签到", aliases={"打卡"}, force_whitespace=True, priority=5)
+CheckinMatcher = on_command("签到", command_key="签到", aliases={"打卡"}, force_whitespace=True, priority=5)
 
 
 @CheckinMatcher.handle()
@@ -75,7 +75,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
         msg += "\n触发额外奖励！获得 500 金币！"
     await CheckinMatcher.finish(msg)
 
-CoinMatcher = on_command("金币", aliases={"余额"}, force_whitespace=True, priority=5)
+CoinMatcher = on_command("金币", command_key=None, aliases={"余额"}, force_whitespace=True, priority=5)
 
 
 @CoinMatcher.handle()
@@ -86,7 +86,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
     await CoinMatcher.finish(ms.at(event.user_id) + f"\n您的金币余额为：\n{coin}枚")
 
 
-AddCoinMatcher = on_command("增加金币", force_whitespace=True, priority=5)
+AddCoinMatcher = on_command("增加金币", command_key=None, force_whitespace=True, priority=5)
 
 @AddCoinMatcher.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -104,7 +104,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
     AccountManage(int(arg[0])).add_coin(int(arg[1]))
     await AddCoinMatcher.finish("已向该账户添加了" + arg[1] + "枚金币！")
 
-ReduceCoinMatcher = on_command("减少金币", force_whitespace=True, priority=5)
+ReduceCoinMatcher = on_command("减少金币", command_key=None, force_whitespace=True, priority=5)
 
 @ReduceCoinMatcher.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -122,7 +122,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
     AccountManage(int(arg[0])).reduce_coin(int(arg[1]))
     await ReduceCoinMatcher.finish("已向该账户扣除了" + arg[1] + "枚金币！")
 
-TradeCoinMatcher = on_command("交易金币", force_whitespace=True, priority=5)
+TradeCoinMatcher = on_command("交易金币", command_key=None, force_whitespace=True, priority=5)
 
 @TradeCoinMatcher.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -140,7 +140,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
         AccountManage(int(arg[0])).add_coin(int(arg[1]))
         await TradeCoinMatcher.finish("已成功将" + arg[1] + "枚金币从您的账户转到" + str(arg[0]) + "的账户！")
 
-CoinRankMatcher = on_command("金币排行", force_whitespace=True, priority=5)
+CoinRankMatcher = on_command("金币排行", command_key=None, force_whitespace=True, priority=5)
 
 @CoinRankMatcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):

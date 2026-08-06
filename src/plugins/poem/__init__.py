@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import MessageEvent, Message, MessageSegment as ms
 from nonebot.params import CommandArg, Received
 from nonebot.typing import T_State
@@ -9,7 +9,7 @@ from .api import get_poem
 
 import random
 
-PoemMatcher = on_command("randomPoem", aliases={"对诗"}, force_whitespace=True, priority=5)
+PoemMatcher = on_command("randomPoem", command_key="对诗", aliases={"对诗"}, force_whitespace=True, priority=5)
 
 @PoemMatcher.handle()
 async def _(state: T_State, event: MessageEvent, args: Message = CommandArg()):

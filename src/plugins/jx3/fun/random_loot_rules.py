@@ -25,7 +25,7 @@ class LootProbabilities:
     general_brand: int = 40
     weapon: int = 10
     jingjian: int = 10
-    xuanjing: int = 1
+    xuanjing: int = 4
     sand_material: int = 30
     other_peerless: int = 5
     appearance: int = 5

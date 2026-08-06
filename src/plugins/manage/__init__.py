@@ -1,6 +1,6 @@
 from typing import Any
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
     MessageEvent,
@@ -45,7 +45,7 @@ except:  # noqa: E722
 import os
 import random
 
-DismissMatcher = on_command("dismiss", aliases={"移除音卡"}, force_whitespace=True, priority=5)
+DismissMatcher = on_command("dismiss", command_key=None, aliases={"移除音卡"}, force_whitespace=True, priority=5)
 
 
 @DismissMatcher.handle()
@@ -69,7 +69,7 @@ async def _(bot: Bot, event: GroupMessageEvent, confirm: Message = Arg()):
         await bot.call_api("set_group_leave", group_id=event.group_id)
 
 
-ResetMatcher = on_command("recovery", aliases={"重置音卡"}, force_whitespace=True, priority=5)
+ResetMatcher = on_command("recovery", command_key=None, aliases={"重置音卡"}, force_whitespace=True, priority=5)
 
 @ResetMatcher.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
@@ -108,7 +108,7 @@ async def create_issue(uin: str, comment: str):
     }
     await Request(url, headers=headers, params=data).post()
 
-FeedbackMatcher = on_command("feedback", aliases={"反馈"}, force_whitespace=True, priority=5)
+FeedbackMatcher = on_command("feedback", command_key=None, aliases={"反馈"}, force_whitespace=True, priority=5)
 
 @FeedbackMatcher.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -122,7 +122,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
         await create_issue(user, msg)
         await FeedbackMatcher.finish("已经将您的反馈内容提交至Inkar Suki GitHub，处理完毕后我们会通过电子邮件等方式通知您，音卡感谢您的反馈！")
 
-EchoMatcher = on_command("echo", force_whitespace=True, priority=5)  # 复读机功能
+EchoMatcher = on_command("echo", command_key=None, force_whitespace=True, priority=5)  # 复读机功能
 
 @EchoMatcher.handle()
 async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
@@ -132,7 +132,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         await EchoMatcher.finish(denied("manage.echo"))
     await EchoMatcher.finish(args)
 
-PingMatcher = on_command("ping", force_whitespace=True, priority=5)  # 测试机器人是否在线
+PingMatcher = on_command("ping", command_key=None, force_whitespace=True, priority=5)  # 测试机器人是否在线
 
 @PingMatcher.handle()
 async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
@@ -153,7 +153,7 @@ async def _(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
         msg = f"咕咕咕，音卡来啦！\n现在是：{Time().format()}\n{group_count} | {register_count} | {friend_count}\n您拥有机器人的管理员权限！"
     await PingMatcher.finish(msg)
 
-PurgeMatcher = on_command("purge", force_whitespace=True, priority=5)
+PurgeMatcher = on_command("purge", command_key=None, force_whitespace=True, priority=5)
 
 @PurgeMatcher.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -169,7 +169,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
     else:
         await PurgeMatcher.finish("好的，已帮你清除图片缓存~")
 
-AdminMatcher = on_command("setop", aliases={"admin", "setadmin"}, force_whitespace=True, priority=5)
+AdminMatcher = on_command("setop", command_key=None, aliases={"admin", "setadmin"}, force_whitespace=True, priority=5)
 
 @AdminMatcher.handle()
 async def _(bot: Bot, event: MessageEvent, full_argument: Message = CommandArg()):
@@ -221,7 +221,7 @@ async def _(bot: Bot, event: MessageEvent, full_argument: Message = CommandArg()
     await AdminMatcher.finish(f"{target_name}的权限节点已{action}：{node}")
 
 
-PermissionNodesMatcher = on_command("permissions", aliases={"perms", "权限节点", "我的权限"}, force_whitespace=True, priority=5)
+PermissionNodesMatcher = on_command("permissions", command_key=None, aliases={"perms", "权限节点", "我的权限"}, force_whitespace=True, priority=5)
 
 @PermissionNodesMatcher.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -243,7 +243,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
     await PermissionNodesMatcher.finish(f"{target_desc}拥有的权限节点：\n" + "\n".join(f"- {node}" for node in nodes))
 
 
-GroupPermissionNodesMatcher = on_command("grouppermissions", aliases={"groupperms", "群权限"}, force_whitespace=True, priority=5)
+GroupPermissionNodesMatcher = on_command("grouppermissions", command_key=None, aliases={"groupperms", "群权限"}, force_whitespace=True, priority=5)
 
 @GroupPermissionNodesMatcher.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):

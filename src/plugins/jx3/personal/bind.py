@@ -3,6 +3,7 @@ from typing import Any
 
 from src.utils.database import db
 from src.utils.database.classes import PersonalSettings, RoleData
+from src.utils.database.player import search_player
 from src.utils.permission import check_permission
 
 class RoleBind:
@@ -10,14 +11,21 @@ class RoleBind:
         self.user_id = int(user_id)
         self.roles = roles
 
-    def bind(self) -> str:
+    async def bind(self) -> str:
         exist_roles: list[RoleData] = []
         personal_settings: PersonalSettings | Any = db.where_one(PersonalSettings(), "user_id = ?", self.user_id, default=PersonalSettings(user_id=self.user_id))
         bound_roles = personal_settings.roles
-        for role, server in self.roles:
-            role_data: RoleData | Any = db.where_one(RoleData(), "roleName = ? AND serverName = ?", role, server, default=None)
-            if role_data is not None:
-                exist_roles.append(copy.deepcopy(role_data))
+        if len(self.roles) == 1:
+            role, server = self.roles[0]
+            role_data = await search_player(role_name=role, server_name=server)
+            if role_data.roleId == "":
+                return f"绑定失败：未找到角色 [{role}·{server}]，请检查区服和角色名！"
+            exist_roles.append(copy.deepcopy(role_data))
+        else:
+            for role, server in self.roles:
+                role_data: RoleData | Any = db.where_one(RoleData(), "roleName = ? AND serverName = ?", role, server, default=None)
+                if role_data is not None:
+                    exist_roles.append(copy.deepcopy(role_data))
         final_bound_roles = list(set(bound_roles) | set(exist_roles))
         if len(final_bound_roles) > 15 and not check_permission(self.user_id, "jx3.personal.roles.unlimited"):
             return f"绑定失败！\n绑定后的总角色数量超过15个，请酌情绑定！\n目前已绑定 {len(bound_roles)}/15 个角色"

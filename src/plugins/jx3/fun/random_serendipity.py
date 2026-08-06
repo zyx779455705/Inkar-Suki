@@ -5,7 +5,7 @@ from PIL import Image
 from nonebot.adapters.onebot.v11 import MessageSegment as ms
 
 from src.const.path import ASSETS, CACHE, CONST, build_path
-from src.plugins.jx3.joy.random_item import get_random
+from src.plugins.jx3.fun.random_item import get_random
 from src.utils.generate import get_uuid
 from src.utils.network import Request
 

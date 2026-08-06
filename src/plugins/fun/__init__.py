@@ -3,7 +3,8 @@ from typing import Any
 import ast
 import html
 
-from nonebot import on_regex, on_command
+from nonebot import on_regex
+from src.utils.command import on_command
 from nonebot.params import CommandArg, RawCommand
 from nonebot.adapters.onebot.v11 import (
     Bot,
@@ -349,7 +350,7 @@ async def _(event: MessageEvent):
     await What2EatMatcher.send("正在为你找好吃的……")
     await What2EatMatcher.send(msg, at_sender=True)
 
-BMIMatcher = on_command("bmi", aliases={"BMI", "身体质量指数"}, force_whitespace=True, priority=5)
+BMIMatcher = on_command("bmi", command_key=None, aliases={"BMI", "身体质量指数"}, force_whitespace=True, priority=5)
 
 @BMIMatcher.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -375,8 +376,8 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
         msg = f"您的BMI计算结果是：{final_result}，属于肥胖（28.0+）哦~\n音卡建议您少吃高热量食物，多多运动保持健康身体哦！"
     await BMIMatcher.finish(msg)
 
-HelpMatcher = on_command("help", aliases={"帮助", "功能", "查看", "文档", "使用说明"}, force_whitespace=True, priority=5)
-InkarHelpMatcher = on_command("inkar", aliases={"Inkar", "INKAR", "音卡"}, force_whitespace=True, priority=5)
+HelpMatcher = on_command("help", command_key="帮助", aliases={"帮助", "功能", "查看", "文档", "使用说明"}, force_whitespace=True, priority=5)
+InkarHelpMatcher = on_command("inkar", command_key="帮助", aliases={"Inkar", "INKAR", "音卡"}, force_whitespace=True, priority=5)
 
 @HelpMatcher.handle()
 async def help_(args: Message = CommandArg()):
@@ -393,7 +394,7 @@ async def _(args: Message = CommandArg()):
     await InkarHelpMatcher.finish(await _render_inkar_help_image())
 
 
-RandomDogImageMatcher = on_command("随机狗图", aliases={"随机lwx"}, priority=5)
+RandomDogImageMatcher = on_command("随机狗图", command_key=None, aliases={"随机lwx"}, priority=5)
 
 @RandomDogImageMatcher.handle()
 async def _(event: MessageEvent, args: Message = CommandArg()):
@@ -435,7 +436,7 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
     image = (await Request(data[0]["url"]).get()).content
     await RandomDogImageMatcher.finish(ms.image(image))
 
-RandomDragonImageMatcher = on_command("随机龙图", priority=5)
+RandomDragonImageMatcher = on_command("随机龙图", command_key=None, priority=5)
 
 @RandomDragonImageMatcher.handle()
 async def _(args: Message = CommandArg()):
@@ -460,7 +461,7 @@ async def _(args: Message = CommandArg()):
             image = resp.content
             await RandomDragonImageMatcher.finish(ms.image(image))
 
-AnswerBookMatcher = on_command("答案之书", priority=5, force_whitespace=True)
+AnswerBookMatcher = on_command("答案之书", command_key="答案之书", priority=5, force_whitespace=True)
 
 @AnswerBookMatcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -470,7 +471,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         answer = random.choice(a)
         await AnswerBookMatcher.finish("答案之书给出的建议是：\n" + answer)
 
-CustomBanMatcher = on_command("抽奖", aliases={"抽大奖", "十连抽", "百连抽", "抽巨奖"}, priority=5)
+CustomBanMatcher = on_command("抽奖", command_key="抽奖", aliases={"抽大奖", "十连抽", "百连抽", "抽巨奖"}, priority=5)
 
 @CustomBanMatcher.handle()
 async def _(bot: Bot, event: GroupMessageEvent, cmd: str = RawCommand(), args: Message = CommandArg()):
@@ -501,7 +502,7 @@ async def _(bot: Bot, event: GroupMessageEvent, cmd: str = RawCommand(), args: M
     )
     await bot.set_group_ban(group_id=event.group_id, user_id=event.user_id, duration=reward_time*60)
 
-AllLiftBanMatcher = on_command("大赦天下", priority=5, force_whitespace=True)
+AllLiftBanMatcher = on_command("大赦天下", command_key="大赦天下", priority=5, force_whitespace=True)
 
 @AllLiftBanMatcher.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):

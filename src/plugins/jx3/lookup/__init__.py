@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent
 from nonebot.params import CommandArg
 
@@ -6,7 +6,7 @@ from src.utils.analyze import check_number
 
 from .api import get_daren_count, get_tieba_records
 
-lookup_matcher = on_command("jx3_cheater", aliases={"查人", "骗子"}, force_whitespace=True, priority=5)
+lookup_matcher = on_command("jx3_cheater", command_key="查人", aliases={"查人", "骗子"}, force_whitespace=True, priority=5)
 
 @lookup_matcher.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):

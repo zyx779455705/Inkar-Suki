@@ -1,7 +1,7 @@
 from pathlib import Path
 from jinja2 import Template
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
 from nonebot.params import CommandArg
 
@@ -33,7 +33,7 @@ async def generate_snacks_image(season: str = "风语", *, data: dict[str, list[
     return await generate(html, ".container", segment=True)
     
 
-school_snacks_matcher = on_command("小药", priority=5, force_whitespace=True)
+school_snacks_matcher = on_command("小药", command_key="小药", priority=5, force_whitespace=True)
 
 @school_snacks_matcher.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):

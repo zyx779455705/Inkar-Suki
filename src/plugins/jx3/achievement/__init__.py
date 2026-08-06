@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import (
     Message,
     GroupMessageEvent
@@ -14,14 +14,14 @@ from .v2 import (
     zone_achievement
 )
 
-achievement_v2_matcher = on_command("jx3_progress_v2", aliases={"进度", "成就进度", "成就"}, force_whitespace=True, priority=5)
+achievement_v2_matcher = on_command("jx3_progress_v2", command_key="成就", aliases={"成就", "成就进度", "进度"}, force_whitespace=True, priority=5)
 
 @achievement_v2_matcher.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     args = msg.extract_plain_text().strip().split()
 
     if len(args) not in [2, 3]:
-        await achievement_v2_matcher.finish(PROMPT.ArgumentCountInvalid + "\n参考格式：进度 <服务器> <角色名> <关键词>")
+        await achievement_v2_matcher.finish(PROMPT.ArgumentCountInvalid + "\n参考格式：成就 <服务器> <角色名> <关键词>")
 
     if len(args) == 2:
         server = ""
@@ -41,7 +41,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     data = await get_progress_v2(group_server.server, role_name, achievement_name)
     await achievement_v2_matcher.finish(data)
 
-zone_achievement_matcher = on_command("jx3_zoneachi", aliases={"团本成就"}, force_whitespace=True, priority=5)
+zone_achievement_matcher = on_command("jx3_zoneachi", command_key="团本成就", aliases={"团本成就"}, force_whitespace=True, priority=5)
 
 @zone_achievement_matcher.handle()
 async def _(event: GroupMessageEvent, full_argument: Message = CommandArg()):

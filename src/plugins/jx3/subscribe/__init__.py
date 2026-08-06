@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, Message
 
@@ -10,7 +10,7 @@ from .about import generate_group_info
 
 import json
 
-enable_matcher = on_command("jx3_subscribe", aliases={"订阅", "开启"}, force_whitespace=True, priority=5)
+enable_matcher = on_command("jx3_subscribe", command_key=None, aliases={"订阅", "开启"}, force_whitespace=True, priority=5)
 
 @enable_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -39,7 +39,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         set_group_settings(str(event.group_id), "additions", current_additions)
         await enable_matcher.finish("订阅成功！\n可使用“关于”查看本群详细信息！")
 
-disable_matcher = on_command("jx3_unsubscribe", aliases={"退订", "关闭"}, force_whitespace=True, priority=5)
+disable_matcher = on_command("jx3_unsubscribe", command_key=None, aliases={"退订", "关闭"}, force_whitespace=True, priority=5)
 
 @disable_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -68,7 +68,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         set_group_settings(str(event.group_id), "additions", currentAddition)
         await disable_matcher.finish("退订成功！\n可使用“关于”查看本群详细信息！")
 
-group_info_matcher = on_command("jx3_about", aliases={"关于", "本群订阅"}, force_whitespace=True, priority=5)
+group_info_matcher = on_command("jx3_about", command_key=None, aliases={"关于", "本群订阅"}, force_whitespace=True, priority=5)
 
 @group_info_matcher.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):

@@ -87,7 +87,7 @@ from .horse import (
     horse_chat_matcher,
     horse_spawn_matcher
 )
-from .joy import (
+from .fun import (
     saohua_matcher,
     tiangou_matcher,
     random_loot_matcher,

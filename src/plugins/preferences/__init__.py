@@ -1,4 +1,4 @@
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Arg
 from nonebot.typing import T_State
@@ -11,7 +11,7 @@ from src.utils.permission import check_permission, denied
 
 from .app import Preference
 
-personal_preferences = on_command("偏好", priority=5, force_whitespace=True)
+personal_preferences = on_command("偏好", command_key=None, priority=5, force_whitespace=True)
 
 @personal_preferences.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
@@ -30,7 +30,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         reply = Preference(event.user_id, args[0], args[1]).set()
         await personal_preferences.finish(reply)
 
-reset_preferences = on_command("重置偏好", priority=5, force_whitespace=True)
+reset_preferences = on_command("重置偏好", command_key=None, priority=5, force_whitespace=True)
 
 @reset_preferences.handle()
 async def _(event: GroupMessageEvent, state: T_State, matcher: Matcher, msg: Message = CommandArg()):

@@ -2,11 +2,12 @@ from typing import Any
 from jinja2 import Template
 from datetime import datetime
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import (
     Bot,
     Message,
+    MessageEvent,
     GroupMessageEvent,
 )
 
@@ -15,12 +16,39 @@ from src.utils.database import cache_db
 from src.utils.database.classes import GroupMessage, MemberMessage
 from src.utils.time import Time
 from src.utils.generate import generate
+from src.utils.permission import check_permission, denied
 from src.templates import HTMLSourceCode
 
 from .utils import get_date_timestamp
 from ._template import template_body, table_head
+from .command_statistics import render_command_statistics
 
-today_message_count = on_command("today_message_count", aliases={"本群发言统计"}, priority=5)
+
+COMMAND_STATISTICS_PERMISSION_NODE = "bot.statistics.command"
+
+
+command_statistics_matcher = on_command(
+    "command_statistics",
+    command_key=None,
+    aliases={"命令统计"},
+    force_whitespace=True,
+    priority=5,
+)
+
+
+@command_statistics_matcher.handle()
+async def _(event: MessageEvent, args: Message = CommandArg()):
+    if not check_permission(event.user_id, COMMAND_STATISTICS_PERMISSION_NODE):
+        await command_statistics_matcher.finish(
+            denied(COMMAND_STATISTICS_PERMISSION_NODE)
+        )
+    await command_statistics_matcher.finish(
+        await render_command_statistics(args.extract_plain_text())
+    )
+
+
+today_message_count = on_command("today_message_count", command_key=None, aliases={"本群发言统计"}, priority=5)
+
 
 @today_message_count.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):

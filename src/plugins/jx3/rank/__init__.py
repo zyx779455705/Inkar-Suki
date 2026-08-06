@@ -1,6 +1,6 @@
 from typing import Any
 from jinja2 import Template
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, GroupMessageEvent
 
@@ -23,7 +23,7 @@ from .team import parse_team_rank_data
 
 from ._template import cqcrank_template_body, cqcrank_table_head
 
-game_rank_matcher = on_command("jx3_game_rank", aliases={"江湖榜单", "榜单"}, priority=5, force_whitespace=True)
+game_rank_matcher = on_command("jx3_game_rank", command_key="榜单", aliases={"江湖榜单", "榜单"}, priority=5, force_whitespace=True)
 
 
 @game_rank_matcher.handle()
@@ -57,7 +57,7 @@ def _limit_rank_records_per_role(records: list[Any], limit: int) -> list[Any]:
         result.append(record)
     return result
 
-exp_rank_matcher = on_command("jx3_zlrank", aliases={"资历排行", "资历榜单"}, priority=5, force_whitespace=True)
+exp_rank_matcher = on_command("jx3_zlrank", command_key="榜单", aliases={"资历排行", "资历榜单"}, priority=5, force_whitespace=True)
 
 @exp_rank_matcher.handle()
 async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
@@ -94,9 +94,9 @@ async def _(event: GroupMessageEvent, argument: Message = CommandArg()):
     image = await get_zlrank(server, school)
     await exp_rank_matcher.finish(image)
 
-rdps_rank_matcher = on_command("jx3_rdps_rank", aliases={"RD天梯", "rd天梯", "Rd天梯"}, priority=5)
+rdps_rank_matcher = on_command("jx3_rdps_rank", command_key="天梯", aliases={"RD天梯", "rd天梯", "Rd天梯"}, priority=5)
 
-rhps_rank_matcher = on_command("jx3_rhps_rank", aliases={"RH天梯", "rh天梯", "Rh天梯"}, priority=5)
+rhps_rank_matcher = on_command("jx3_rhps_rank", command_key="天梯", aliases={"RH天梯", "rh天梯", "Rh天梯"}, priority=5)
 
 @rdps_rank_matcher.handle()
 async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
@@ -150,7 +150,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     reply_msg = await get_rank(str(dungeon_mode) + str(dungeon_name), boss_name, str(kungfu_name), "rhps")
     await rhps_rank_matcher.finish(reply_msg)
 
-cqcrank_carry = on_command("jx3_cqc_carry", aliases={"池清川大C榜"}, priority=5, force_whitespace=True)
+cqcrank_carry = on_command("jx3_cqc_carry", command_key="天梯", aliases={"池清川大C榜"}, priority=5, force_whitespace=True)
 
 @cqcrank_carry.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -211,7 +211,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     image = await generate(html, ".container", segment=True)
     await cqcrank_carry.finish(image)
 
-cqcrank_uncarry = on_command("jx3_cqc_uncarry", aliases={"池清川大吸榜"}, priority=5, force_whitespace=True)
+cqcrank_uncarry = on_command("jx3_cqc_uncarry", command_key="天梯", aliases={"池清川大吸榜"}, priority=5, force_whitespace=True)
 
 @cqcrank_uncarry.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -276,7 +276,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     image = await generate(html, ".container", segment=True)
     await cqcrank_uncarry.finish(image)
 
-team_rank_matcher = on_command("jx3_teamrank", aliases={"团队排名", "团队排行", "名人堂"}, priority=5, force_whitespace=True)
+team_rank_matcher = on_command("jx3_teamrank", command_key="天梯", aliases={"团队排名", "团队排行", "名人堂"}, priority=5, force_whitespace=True)
 
 @team_rank_matcher.handle()
 async def _(event: GroupMessageEvent, raw_arg: Message = CommandArg()):
@@ -296,7 +296,10 @@ async def _(event: GroupMessageEvent, raw_arg: Message = CommandArg()):
         await team_rank_matcher.finish(msg)
 
 battle_rank_matcher = on_command(
-    "jx3_battle_rank", aliases={"天梯", "天梯榜"}, priority=5
+    "jx3_battle_rank",
+    command_key="天梯",
+    aliases={"天梯", "天梯榜"},
+    priority=5,
 )
 
 
@@ -315,7 +318,7 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
     result = await get_battle_rank(kungfu_name, boss_name)
     await battle_rank_matcher.finish(result)
 
-thrrank_carry = on_command("jx3_thr_carry", aliases={"唐怀仁大C榜"}, priority=5, force_whitespace=True)
+thrrank_carry = on_command("jx3_thr_carry", command_key="天梯", aliases={"唐怀仁大C榜"}, priority=5, force_whitespace=True)
 
 @thrrank_carry.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -377,7 +380,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     image = await generate(html, ".container", segment=True)
     await thrrank_carry.finish(image)
 
-THRRank_uncarry = on_command("jx3_thr_uncarry", aliases={"唐怀仁大吸榜"}, priority=5, force_whitespace=True)
+THRRank_uncarry = on_command("jx3_thr_uncarry", command_key="天梯", aliases={"唐怀仁大吸榜"}, priority=5, force_whitespace=True)
 
 @THRRank_uncarry.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):

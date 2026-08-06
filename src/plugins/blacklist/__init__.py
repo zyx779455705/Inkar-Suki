@@ -1,6 +1,6 @@
 from jinja2 import Template
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message, Bot
 from nonebot.params import CommandArg
 
@@ -12,7 +12,7 @@ from src.templates import HTMLSourceCode
 from .process import Blacklist
 from ._template import additional_css, table_head, template_body
 
-BlockMatcher = on_command("block", aliases={"避雷", "加入黑名单"}, force_whitespace=True, priority=5)
+BlockMatcher = on_command("block", command_key=None, aliases={"避雷", "加入黑名单"}, force_whitespace=True, priority=5)
 
 
 @BlockMatcher.handle()
@@ -27,7 +27,7 @@ async def _(event: GroupMessageEvent, message: Message = CommandArg()):
         await BlockMatcher.finish("该玩家已加入黑名单，请勿重复添加，如需更新理由可以先移除再重新添加。")
     await BlockMatcher.finish("成功将该玩家加入黑名单！")
 
-UnblockMatcher = on_command("unblock", aliases={"移除黑名单", "移出黑名单", "删除避雷", "撤销避雷", "取消避雷"}, force_whitespace=True, priority=5)  # 解除避雷
+UnblockMatcher = on_command("unblock", command_key=None, aliases={"移除黑名单", "移出黑名单", "删除避雷", "撤销避雷", "取消避雷"}, force_whitespace=True, priority=5)  # 解除避雷
 
 @UnblockMatcher.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
@@ -41,7 +41,7 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
         await UnblockMatcher.finish("移除失败！尚未避雷该玩家！")
     await UnblockMatcher.finish("移除避雷成功！")
 
-ListBlockMatcher = on_command("lblock", aliases={"本群黑名单", "列出黑名单", "黑名单", "避雷名单", "查看避雷"}, force_whitespace=True, priority=5)  # 列出所有黑名单
+ListBlockMatcher = on_command("lblock", command_key=None, aliases={"本群黑名单", "列出黑名单", "黑名单", "避雷名单", "查看避雷"}, force_whitespace=True, priority=5)  # 列出所有黑名单
 
 @ListBlockMatcher.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):

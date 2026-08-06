@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from nonebot import on_command
+from src.utils.command import on_command
 from nonebot.adapters.onebot.v11 import Bot, Message, GroupMessageEvent, MessageSegment as ms
 from nonebot.params import CommandArg
 
@@ -24,7 +24,7 @@ from .everyday_affection import (
 
 
 
-bind_affection_matcher = on_command("jx3_affbind", aliases={"绑定情缘"}, force_whitespace=True, priority=5)
+bind_affection_matcher = on_command("jx3_affbind", command_key=None, aliases={"绑定情缘"}, force_whitespace=True, priority=5)
 
 @bind_affection_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -53,7 +53,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     ans = await bind_affection(self_qq, self_name, other_qq, other_name, event.group_id, timestamp)
     await bind_affection_matcher.finish(ans[0])
 
-delete_affection_matcher = on_command("jx3_affdl", aliases={"解除情缘"}, force_whitespace=True, priority=5)
+delete_affection_matcher = on_command("jx3_affdl", command_key=None, aliases={"解除情缘"}, force_whitespace=True, priority=5)
 
 @delete_affection_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -65,7 +65,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         return
     await delete_affection_matcher.finish(ans[0])
 
-affection_crt_matcher = on_command("jx3_affcrt", aliases={"查看情缘证书"}, force_whitespace=True, priority=5)
+affection_crt_matcher = on_command("jx3_affcrt", command_key="查看情缘证书", aliases={"查看情缘证书"}, force_whitespace=True, priority=5)
 
 @affection_crt_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
@@ -74,7 +74,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     img = await generate_affection_image(event.user_id)
     await affection_crt_matcher.finish(img)
 
-random_affection_matcher = on_command("jx3_rdaff", aliases={"随机情缘", "抽情缘"}, priority=5, force_whitespace=True)
+random_affection_matcher = on_command("jx3_rdaff", command_key="随机情缘", aliases={"随机情缘", "抽情缘"}, priority=5, force_whitespace=True)
 
 @random_affection_matcher.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
