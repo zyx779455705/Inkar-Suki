@@ -57,10 +57,20 @@ async def jx3_saohua_tiangou(args: Message = CommandArg()):
     msg = info["data"]["text"]
     await tiangou_matcher.finish(msg)
 
-random_loot_matcher = on_command("jx3_rdloot", command_key="黑本", aliases={"黑本", "模拟掉落", "红本"}, force_whitespace=True, priority=5)
+random_loot_matcher = on_command(
+    "jx3_rdloot",
+    command_key="黑本",
+    aliases={"黑本", "模拟掉落", "红本", "金本"},
+    force_whitespace=True,
+    priority=5,
+)
 
 @random_loot_matcher.handle()
-async def _(event: GroupMessageEvent, args: Message = CommandArg()):
+async def _(
+    event: GroupMessageEvent,
+    args: Message = CommandArg(),
+    cmd: str = RawCommand(),
+):
     msg = args.extract_plain_text()
     if msg == "":
         await random_loot_matcher.finish(PROMPT.ArgumentCountInvalid + "\n参考格式：黑本 <副本名> <难度>")
@@ -74,7 +84,11 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await random_loot_matcher.finish(PROMPT.DungeonInvalid)
     else:
         display_mode = Preference(event.user_id, "", "").setting("黑本显示")
-        image = await instance.generate(display_mode=display_mode)
+        probability_multipliers = {"红本": 2, "金本": 100}
+        image = await instance.generate(
+            display_mode=display_mode,
+            probability_multiplier=probability_multipliers.get(cmd, 1),
+        )
         await random_loot_matcher.finish(ms.at(event.user_id) + image)
 
 random_5gimage_matcher = on_command("jx3_random_5gimage", command_key="随机武技图", aliases={"随机5G图", "随机5g图", "随机武技图"}, priority=5, force_whitespace=True)

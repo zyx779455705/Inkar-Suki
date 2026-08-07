@@ -150,9 +150,13 @@ class RandomLoot:
             api_items_by_boss[boss_name] = all_items_raw
         self.loot_list_raw = api_items_by_boss
         
-    async def distribute(self) -> dict[str, list[JX3RandomItem]]:
+    async def distribute(
+        self,
+        probability_multiplier: int = 1,
+    ) -> dict[str, list[JX3RandomItem]]:
         await self.get_boss_list()
         await self.get_loot_list()
+        probabilities = LOOT_PROBABILITIES.scaled(probability_multiplier)
         result: dict[str, list[JX3RandomItem]] = {}
 
         def append_item(
@@ -229,15 +233,15 @@ class RandomLoot:
             is_penultimate_5 = rule.is_penultimate_in_five
             is_challenge = self.name.startswith("25人挑战")
 
-            _general_brand = get_random(LOOT_PROBABILITIES.general_brand)
-            _weapon = get_random(LOOT_PROBABILITIES.weapon)
-            _jingjian = get_random(LOOT_PROBABILITIES.jingjian)
-            _xuanjing = get_random(LOOT_PROBABILITIES.xuanjing)
-            _sand_material = get_random(LOOT_PROBABILITIES.sand_material)
-            _other_peerless = get_random(LOOT_PROBABILITIES.other_peerless) # 特殊掉落
-            _appearance = get_random(LOOT_PROBABILITIES.appearance) # 外观道具
-            _extra_peerless = get_random(LOOT_PROBABILITIES.extra_peerless) # 额外特殊掉落 例如阅读的书
-            _book = get_random(LOOT_PROBABILITIES.book) # 侠客秘籍
+            _general_brand = get_random(probabilities.general_brand)
+            _weapon = get_random(probabilities.weapon)
+            _jingjian = get_random(probabilities.jingjian)
+            _xuanjing = get_random(probabilities.xuanjing)
+            _sand_material = get_random(probabilities.sand_material)
+            _other_peerless = get_random(probabilities.other_peerless) # 特殊掉落
+            _appearance = get_random(probabilities.appearance) # 外观道具
+            _extra_peerless = get_random(probabilities.extra_peerless) # 额外特殊掉落 例如阅读的书
+            _book = get_random(probabilities.book) # 侠客秘籍
         
             enchants = [i for i in loot_list if re.search(r'(伤|疗|御)·(腕|腰|鞋|帽|衣)$', str(i["Name"])) is not None]
 
@@ -315,7 +319,7 @@ class RandomLoot:
                 ]
 
                 yellow_pool = treasure_boxes if get_random(
-                    LOOT_PROBABILITIES.challenge_treasure_replacement
+                    probabilities.challenge_treasure_replacement
                 ) and treasure_boxes else yellow_dps
                 for pool in (yellow_pool, heal_or_tank_effect, non_yellow_dps):
                     if pool:
@@ -356,7 +360,7 @@ class RandomLoot:
                     weapons = [i for i in loot_list if ("Color" in i and i.get("BelongSchool") not in ["精简", "通用", "藏剑", ""]) or str(i["Name"]).startswith("藏剑武器")]
                     weapon_boxes = [i for i in loot_list if not str(i["Name"]).startswith("于阗玉") and str(i["Name"]).count("·") == 2]
                     selected_pool = weapon_boxes if get_random(
-                        LOOT_PROBABILITIES.weapon_box_replacement
+                        probabilities.weapon_box_replacement
                     ) and weapon_boxes else weapons
                     if not selected_pool:
                         selected_pool = weapon_boxes
@@ -401,7 +405,7 @@ class RandomLoot:
                 # 最终 boss 特殊掉落
                 if not is_challenge and is_final:
                     # 水特效
-                    is_box = get_random(LOOT_PROBABILITIES.final_boss_box)
+                    is_box = get_random(probabilities.final_boss_box)
                     if is_box:
                         box = [i for i in loot_list if str(i["Name"]).endswith("·奇")]
                         if box:
@@ -662,8 +666,14 @@ class RandomLoot:
 
         return result
     
-    async def generate(self, display_mode: str = "纵向"):
-        data = await self.distribute()
+    async def generate(
+        self,
+        display_mode: str = "纵向",
+        probability_multiplier: int = 1,
+    ):
+        data = await self.distribute(
+            probability_multiplier=probability_multiplier,
+        )
         horizontal = display_mode == "横向"
         item_template = template_item_horizontal if horizontal else template_item
         loot_template = template_loot_horizontal if horizontal else template_loot
