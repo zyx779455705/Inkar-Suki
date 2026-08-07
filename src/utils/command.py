@@ -20,7 +20,7 @@ def get_command_keys() -> set[str]:
 def on_command(
     command: str | tuple[str, ...],
     *args: Any,
-    command_key: str | None,
+    command_key: str | None = None,
     **kwargs: Any,
 ) -> type[Matcher]:
     """注册命令 Matcher，并按 command_key 记录每次调用。"""
