@@ -26,6 +26,15 @@ command_summary_head = """
 <th class="stats-time-column">最近调用</th>
 """
 
+analyzer_summary_head = """
+<th class="stats-rank-column">排行</th>
+<th class="stats-key-column">前缀</th>
+<th>总使用</th>
+<th>今日</th>
+<th>近 7 日</th>
+<th class="stats-time-column">最近使用</th>
+"""
+
 command_detail_head = """
 <th>统计项</th>
 <th>数值</th>
