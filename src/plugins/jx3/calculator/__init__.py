@@ -48,7 +48,7 @@ from .traverse import (
     save_rating_cache,
 )
 from .rdps import BLACalculator, TRDCalculator
-from .jcl_analyze import CQCAnalyze, FALAnalyze, YXCAnalyze, RODAnalyze, DPSAnalyze, CALAnalyze, ASNAnalyze, THRAnalyze, THFAnalyze, LGZAnalyze, LNXAnalyze, QJHAnalyze
+from .jcl_analyze import CQCAnalyze, FALAnalyze, YXCAnalyze, RODAnalyze, DPSAnalyze, CALAnalyze, ASNAnalyze, THRAnalyze, THFAnalyze, LGZAnalyze, LNNAnalyze, LNXAnalyze, QJDAnalyze, QJHAnalyze
 from ._template import calculator_timeline_template, custom_loop_help_template
 
 from .therapy_panel import therapy_panel
@@ -110,7 +110,9 @@ JCL_ANALYSIS_HELP_TEXT = (
     "【Inkar Suki JCL分析简短说明】\n"
     "音卡可以通过JCL分析副本战斗时各种情况，需在打之前勾选茗伊战斗事件记录（见图片），不同的前缀有不同的效果，前缀直接在文件名前方加上后直接上传至有音卡的群（如果群主不嫌消息多的话）\n\n"
     "【BLA-】 单BOSS 全程 RHPS+RDPS分析（powered by 剑三警长）\n"
+    "【LNN-】鲁念雪 衡鹊在 BOSS 读条前被击杀的轮次与伤害明细\n"
     "【LNX-】鲁念雪 每阶段减伤/治疗/化解贡献统计\n"
+    "【QJD-】千机源枢 藤蔓旁机卒每轮打断情况\n"
     "【ASN-】阿史那承庆 QTE计数+死侍HPS统计\n"
     "【THR-】唐怀仁P1 DPS统计+榜单\n"
     "【TRD-】唐怀仁 P1 阶段 RDPS 分析（powered by 剑三警长）\n"
@@ -3072,8 +3074,12 @@ async def _(bot: Bot, event: GroupUploadNoticeEvent):
         analyzer = THFAnalyze
     elif check_jcl_name(event.file.name, "LGZ-"):
         analyzer = LGZAnalyze
+    elif check_jcl_name(event.file.name, "LNN-"):
+        analyzer = LNNAnalyze
     elif check_jcl_name(event.file.name, "LNX-"):
         analyzer = LNXAnalyze
+    elif check_jcl_name(event.file.name, "QJD-"):
+        analyzer = QJDAnalyze
     # elif check_jcl_name(event.file.name, "QJH-"):
     # 由于某位花间玩家的强烈抗议
     elif check_jcl_name(event.file.name, "QJV-"):

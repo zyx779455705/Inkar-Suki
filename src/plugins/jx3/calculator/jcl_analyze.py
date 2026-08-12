@@ -1081,6 +1081,307 @@ async def LNXAnalyze(file_name: str, url: str, anonymous: bool = False, user_id:
     raw_data = data.get("data", data) if isinstance(data, dict) else data
     return await render_lnx_analysis(raw_data, anonymous)
 
+
+def _lnn_safe_int(value: Any, default: int = 0) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def build_lnn_analysis_data(raw_data: Any, anonymous: bool = False) -> list[dict[str, Any]]:
+    if isinstance(raw_data, dict) and "data" in raw_data:
+        raw_data = raw_data.get("data")
+    waves = raw_data if isinstance(raw_data, list) else []
+    anonymous_names: dict[str, str] = {}
+    result: list[dict[str, Any]] = []
+
+    for wave_order, wave_item in enumerate(waves, 1):
+        if not isinstance(wave_item, dict):
+            continue
+
+        raw_attackers = wave_item.get("attackers")
+        if not isinstance(raw_attackers, list):
+            raw_attackers = []
+        prepared_attackers: list[dict[str, Any]] = []
+        for attacker_item in raw_attackers:
+            if not isinstance(attacker_item, dict):
+                continue
+            damage = max(0, _lnn_safe_int(attacker_item.get("damage")))
+            count = max(0, _lnn_safe_int(attacker_item.get("count")))
+            original_name = str(attacker_item.get("name") or "未知玩家").strip() or "未知玩家"
+            if anonymous and original_name != "未知玩家":
+                if original_name not in anonymous_names:
+                    anonymous_names[original_name] = f"匿名玩家 {len(anonymous_names) + 1}"
+                display_name = anonymous_names[original_name]
+            else:
+                display_name = original_name
+
+            kungfu_id = _lnn_safe_int(attacker_item.get("kungfu_id"))
+            kungfu = Kungfu.with_internel_id(kungfu_id, True)
+            raw_skills = attacker_item.get("skills")
+            if not isinstance(raw_skills, list):
+                raw_skills = []
+            skills = []
+            for skill_item in raw_skills:
+                if not isinstance(skill_item, dict):
+                    continue
+                skill_damage = max(0, _lnn_safe_int(skill_item.get("damage")))
+                skills.append({
+                    "name": str(skill_item.get("name") or "未知技能"),
+                    "damage_value": skill_damage,
+                    "damage": f"{skill_damage:,}",
+                    "count": max(0, _lnn_safe_int(skill_item.get("count"))),
+                    "share": f"{skill_damage / damage * 100:.2f}%" if damage else "0.00%",
+                })
+            skills.sort(key=lambda item: item["damage_value"], reverse=True)
+            prepared_attackers.append({
+                "name": display_name,
+                "kungfu": kungfu.name or "未知心法",
+                "icon": kungfu.icon,
+                "color": kungfu.color,
+                "damage_value": damage,
+                "damage": f"{damage:,}",
+                "count": count,
+                "skills": skills,
+            })
+
+        prepared_attackers.sort(key=lambda item: item["damage_value"], reverse=True)
+        total_damage = max(0, _lnn_safe_int(wave_item.get("total_damage")))
+        if total_damage == 0:
+            total_damage = sum(attacker["damage_value"] for attacker in prepared_attackers)
+        hit_count = max(0, _lnn_safe_int(wave_item.get("hit_count")))
+        if hit_count == 0:
+            hit_count = sum(attacker["count"] for attacker in prepared_attackers)
+
+        for rank, attacker in enumerate(prepared_attackers, 1):
+            share_value = attacker["damage_value"] / total_damage * 100 if total_damage else 0.0
+            attacker["rank"] = rank
+            attacker["share_value"] = f"{min(100.0, max(0.0, share_value)):.2f}"
+            attacker["share"] = f"{share_value:.2f}%"
+
+        result.append({
+            "wave": max(1, _lnn_safe_int(wave_item.get("wave"), wave_order)),
+            "bird": str(wave_item.get("bird") or "未识别衡鹊"),
+            "expected_cast": str(wave_item.get("expected_cast") or "未知读条"),
+            "total_damage": f"{total_damage:,}",
+            "hit_count": hit_count,
+            "attacker_count": len(prepared_attackers),
+            "attackers": prepared_attackers,
+        })
+
+    result.sort(key=lambda item: item["wave"])
+    return result
+
+
+def render_lnn_analysis_html(raw_data: Any, anonymous: bool = False) -> str:
+    waves = build_lnn_analysis_data(raw_data, anonymous)
+    return Template(read(TEMPLATES + "/jx3/lnn_analysis.html")).render(
+        font=ASSETS + "/font/PingFangSC-Semibold.otf",
+        lnn_mark=ASSETS + "/image/jx3/calculator/lnx_mark.png",
+        wave_count=len(waves),
+        waves=waves,
+        saohua=get_saohua(),
+    )
+
+
+async def render_lnn_analysis(raw_data: Any, anonymous: bool = False):
+    html_content = render_lnn_analysis_html(raw_data, anonymous)
+    return await generate(
+        html_content,
+        ".lnn-report",
+        segment=True,
+        viewport={"width": 1700, "height": 1200},
+    )
+
+
+# Lu Nian Xue bird early-kill rounds
+async def LNNAnalyze(file_name: str, url: str, anonymous: bool = False, user_id: int = 0):
+    async with AsyncClient(verify=False) as client:
+        resp = await client.post(
+            f"{Config.jx3.api.cqc_url}/lnn_analyze",
+            json={"jcl_url": url, "jcl_name": file_name},
+            timeout=600,
+        )
+        data = resp.json()
+    if isinstance(data, dict) and data.get("code") not in (None, 200):
+        return data.get("msg") or "鲁念雪衡鹊提前击杀分析失败，请检查 JCL 是否完整。"
+    raw_data = data.get("data", data) if isinstance(data, dict) else data
+    return await render_lnn_analysis(raw_data, anonymous)
+
+
+def _qjd_safe_int(value: Any, default: int = 0) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
+def _qjd_delay(value: Any) -> str:
+    milliseconds = max(0, _qjd_safe_int(value))
+    return f"{milliseconds / 1000:.3f}s"
+
+
+def build_qjd_analysis_data(raw_data: Any, anonymous: bool = False) -> dict[str, Any]:
+    if isinstance(raw_data, dict) and "data" in raw_data:
+        raw_data = raw_data.get("data")
+    data = raw_data if isinstance(raw_data, dict) else {}
+    raw_summary = data.get("summary")
+    raw_summary = raw_summary if isinstance(raw_summary, dict) else {}
+    raw_waves = data.get("waves")
+    raw_waves = raw_waves if isinstance(raw_waves, list) else []
+    anonymous_names: dict[str, str] = {}
+    waves: list[dict[str, Any]] = []
+
+    computed = {
+        "machine_count": 0,
+        "cast_count": 0,
+        "interrupted": 0,
+        "death_terminated": 0,
+        "missed_interrupt": 0,
+    }
+    for wave_order, wave_item in enumerate(raw_waves, 1):
+        if not isinstance(wave_item, dict):
+            continue
+        raw_machines = wave_item.get("machines")
+        raw_machines = raw_machines if isinstance(raw_machines, list) else []
+        machines: list[dict[str, Any]] = []
+        wave_counts = {"cast_count": 0, "interrupted": 0, "death_terminated": 0, "missed_interrupt": 0}
+
+        for machine_item in raw_machines:
+            if not isinstance(machine_item, dict):
+                continue
+            raw_casts = machine_item.get("casts")
+            raw_casts = raw_casts if isinstance(raw_casts, list) else []
+            casts: list[dict[str, Any]] = []
+            machine_counts = {"interrupted": 0, "death_terminated": 0, "missed_interrupt": 0}
+            for cast_order, cast_item in enumerate(raw_casts, 1):
+                if not isinstance(cast_item, dict):
+                    continue
+                status = str(cast_item.get("status") or "unknown")
+                if status not in {"interrupted", "death_terminated", "missed_interrupt"}:
+                    status = "unknown"
+                status_label = str(cast_item.get("status_label") or {
+                    "interrupted": "已打断",
+                    "death_terminated": "死亡终止",
+                    "missed_interrupt": "漏打断",
+                }.get(status, "未识别"))
+                interrupter_item = cast_item.get("interrupter")
+                interrupter = interrupter_item if isinstance(interrupter_item, dict) else {}
+                original_name = str(interrupter.get("name") or "").strip()
+                if anonymous and original_name:
+                    if original_name not in anonymous_names:
+                        anonymous_names[original_name] = f"匿名玩家 {len(anonymous_names) + 1}"
+                    player_name = anonymous_names[original_name]
+                else:
+                    player_name = original_name
+                kungfu_id = _qjd_safe_int(interrupter.get("kungfu_id"))
+                kungfu = Kungfu.with_internel_id(kungfu_id, True)
+
+                if status == "interrupted":
+                    actor_name = player_name or "未知玩家"
+                    detail = str(interrupter.get("skill_name") or "未知技能")
+                    delay = _qjd_delay(interrupter.get("delay_ms"))
+                    icon = kungfu.icon
+                elif status == "death_terminated":
+                    actor_name = "机卒死亡"
+                    detail = str(cast_item.get("note") or "读条期间死亡，不计为漏打断")
+                    delay = _qjd_delay(cast_item.get("death_delay_ms"))
+                    icon = ""
+                else:
+                    actor_name = "无人打断" if status == "missed_interrupt" else "未识别"
+                    detail = str(cast_item.get("note") or "未识别到打断结果")
+                    delay = "—"
+                    icon = ""
+
+                if status in machine_counts:
+                    machine_counts[status] += 1
+                    wave_counts[status] += 1
+                    computed[status] += 1
+                wave_counts["cast_count"] += 1
+                computed["cast_count"] += 1
+                casts.append({
+                    "round": max(1, _qjd_safe_int(cast_item.get("round"), cast_order)),
+                    "status": status,
+                    "status_label": status_label,
+                    "actor_name": actor_name,
+                    "icon": icon,
+                    "kungfu": kungfu.name or "",
+                    "detail": detail,
+                    "delay": delay,
+                })
+
+            computed["machine_count"] += 1
+            machines.append({
+                "npc_id": _qjd_safe_int(machine_item.get("npc_id")),
+                "position": str(machine_item.get("position") or "未识别位置"),
+                "vine": str(machine_item.get("vine") or "未识别"),
+                "side": str(machine_item.get("side") or "未识别"),
+                "cast_count": len(casts),
+                "counts": machine_counts,
+                "has_missed": machine_counts["missed_interrupt"] > 0,
+                "casts": casts,
+            })
+
+        waves.append({
+            "wave": max(1, _qjd_safe_int(wave_item.get("wave"), wave_order)),
+            "machine_count": len(machines),
+            "counts": wave_counts,
+            "has_missed": wave_counts["missed_interrupt"] > 0,
+            "machines": machines,
+        })
+
+    waves.sort(key=lambda item: item["wave"])
+    summary = {
+        "wave_count": _qjd_safe_int(raw_summary.get("wave_count"), len(waves)),
+        "machine_count": _qjd_safe_int(raw_summary.get("machine_count"), computed["machine_count"]),
+        "cast_count": _qjd_safe_int(raw_summary.get("cast_count"), computed["cast_count"]),
+        "interrupted": _qjd_safe_int(raw_summary.get("interrupted"), computed["interrupted"]),
+        "death_terminated": _qjd_safe_int(raw_summary.get("death_terminated"), computed["death_terminated"]),
+        "missed_interrupt": _qjd_safe_int(raw_summary.get("missed_interrupt"), computed["missed_interrupt"]),
+        "unmatched": _qjd_safe_int(raw_summary.get("unmatched_44112_sources")),
+    }
+    summary["success_rate"] = (
+        f"{summary['interrupted'] / (summary['interrupted'] + summary['missed_interrupt']) * 100:.1f}%"
+        if summary["interrupted"] + summary["missed_interrupt"] else "—"
+    )
+    return {"summary": summary, "waves": waves}
+
+
+def render_qjd_analysis_html(raw_data: Any, anonymous: bool = False) -> str:
+    report = build_qjd_analysis_data(raw_data, anonymous)
+    return Template(read(TEMPLATES + "/jx3/qjd_analysis.html")).render(
+        font=ASSETS + "/font/PingFangSC-Semibold.otf",
+        summary=report["summary"],
+        waves=report["waves"],
+        saohua=get_saohua(),
+    )
+
+
+async def render_qjd_analysis(raw_data: Any, anonymous: bool = False):
+    html_content = render_qjd_analysis_html(raw_data, anonymous)
+    return await generate(
+        html_content,
+        ".qjd-report",
+        segment=True,
+        viewport={"width": 1700, "height": 1200},
+    )
+
+
+# Qian Ji Yuan Shu machine interrupt analysis
+async def QJDAnalyze(file_name: str, url: str, anonymous: bool = False, user_id: int = 0):
+    async with AsyncClient(verify=False) as client:
+        resp = await client.post(
+            f"{Config.jx3.api.cqc_url}/qjd_analyze",
+            json={"jcl_url": url, "jcl_name": file_name},
+            timeout=600,
+        )
+        data = resp.json()
+    if isinstance(data, dict) and data.get("code") not in (None, 200):
+        return data.get("msg") or "千机源枢机卒打断分析失败，请检查 JCL 是否完整。"
+    raw_data = data.get("data", data) if isinstance(data, dict) else data
+    return await render_qjd_analysis(raw_data, anonymous)
+
 # Qian Ji yuan shu Health (已弃用)
 # Qian Ji yuan shu Vine
 async def QJHAnalyze(file_name: str, url: str, anonymous: bool = False, user_id: int = 0):

@@ -58,7 +58,6 @@ from .dungeon import (
     drops_list_matcher,
     zone_record_matcher,
     allserver_item_record_matcher,
-    all_roles_teamcd_matcher,
     role_monsters_matcher
 )
 from .emoji import (

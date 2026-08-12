@@ -183,7 +183,82 @@ async def get_mulit_record_image(server: str, roles: list[str]):
     image = await generate(html, ".container", segment=True)
     return image
 
-async def get_personal_roles_teamcd_image(user_id: int, keyword: str = ""):
+async def get_personal_roles_teamcd_image_v1(user_id: int, keyword: str = ""):
+    personal_settings: PersonalSettings | Any = db.where_one(PersonalSettings(), "user_id = ?", str(user_id), default=None)
+    if personal_settings is None or not personal_settings.roles:
+        return "您尚未绑定任何角色！请绑定后再尝试查询！"
+    roles = sort_role_data(personal_settings.roles)
+    responses = [
+        (await request.post(tuilan=True)).json()
+        for request
+        in [
+            build_teamcd_request(role.globalRoleId)
+            for role
+            in roles
+        ]
+    ]
+    roles_data: list[list[dict[str, list[bool]]]] = [[] for _ in range(len(roles))]
+    num = 0
+    for each_response in responses:
+        roles_data[num].append(parse_data(each_response))
+        num += 1
+    final_data = synchronize_keys(roles_data)
+    zones: list[str] = list(set(chain.from_iterable(d.keys() for sublist in final_data for d in sublist)))
+    zones = [z for z in zones if keyword in z]
+    if len(zones) == 0:
+        return "未找到相关副本，请检查后重试！\n可能是当前所有绑定账号均未产生相关副本的记录，待至少一个角色通关其中一个首领后将产生记录。"
+    width = 730 + len(zones) * 200
+    zones = [z.lstrip("10人普通") for z in zones]
+    table_head = "<tr><th style=\"width: 160px\">服务器</th><th style=\"width: 240px\">角色</th><th style=\"width: 160px\">门派</th>" + "\n".join([f"<th>{zone}</th>" for zone in zones]) + "</tr>"
+    tables: list[str] = []
+    num = 0
+    for each_role_data in roles_data:
+        data = each_role_data[0]
+        row = [
+            "<td><span class=\"server-tag\">" \
+            + roles[num].serverName \
+            + "</span></td><td><span style=\"display: inline-block;padding: 2px 8px;border-radius: 12px;background: " \
+            + (School(roles[num].forceName).color or "") \
+            + ";color: " \
+            + "#FFFFFF" \
+            + ";font-size: 24px;\">" \
+            + roles[num].roleName + "</span></td>" \
+            + "<td><span style=\"display: inline-block;padding: 2px 8px;border-radius: 12px;background: " \
+            + (School(roles[num].forceName).color or "") \
+            + ";color: " \
+            + "#FFFFFF" \
+            + ";font-size: 24px;\">" \
+            + roles[num].forceName \
+            + "</span></td>"
+        ]
+        for each_zone in zones:
+            if each_zone not in data:
+                each_zone = "10人普通" + each_zone
+            progress = data[each_zone]
+            image = "\n".join(["<img src=\"" + build_path(ASSETS, ["image", "jx3", "cat", "gold.png" if not value else "grey.png"]) + "\" height=\"20\" width=\"20\">" for value in progress])
+            row.append("<td>" + image + "</td>")
+        tables.append(
+            "<tr>\n" + "\n".join(row) + "\n</tr>"
+        )
+        num += 1
+    html = str(
+        SimpleHTML(
+            html_type = "jx3",
+            html_template = "teamcd",
+            width = width,
+            app_info = "所有角色副本记录",
+            font = build_path(ASSETS, ["font", "PingFangSC-Medium.otf"]),
+            bot_name = Config.bot_basic.bot_name_argument,
+            footer_msg = get_saohua(),
+            table_head = table_head,
+            table_body = "\n".join(tables)
+        )
+    )
+    image = await generate(html, ".container", segment=True)
+    return image
+
+
+async def get_personal_roles_teamcd_image_v2(user_id: int, keyword: str = ""):
     personal_settings: PersonalSettings | Any = db.where_one(PersonalSettings(), "user_id = ?", str(user_id), default=None)
     if personal_settings is None or not personal_settings.roles:
         return "您尚未绑定任何角色！请绑定后再尝试查询！"

@@ -14,7 +14,8 @@ from .record import get_item_record
 from .teamcd import (
     get_zone_record_image as teamcd_v1,
     get_mulit_record_image,
-    get_personal_roles_teamcd_image
+    get_personal_roles_teamcd_image_v1,
+    get_personal_roles_teamcd_image_v2,
 )
 from .role_monster import get_role_monsters_map
 from .monster import get_monsters_map
@@ -39,7 +40,7 @@ async def _(event: GroupMessageEvent, message: Message = CommandArg()):
     if server is None:
         await zone_record_matcher.finish(PROMPT.ServerNotExist)
     if name == "*":
-        data = await get_personal_roles_teamcd_image(event.user_id)
+        data = await get_personal_roles_teamcd_image_v1(event.user_id)
     elif ";" in name:
         roles = name.split(";")
         if len(roles) > 6 and not check_permission(event.user_id, "jx3.dungeon.zones.multi"):
@@ -75,15 +76,23 @@ async def _(event: GroupMessageEvent, message: Message = CommandArg()):
         await get_raid_record_image(server, role_name)
     )
 
-all_roles_teamcd_matcher = on_command("jx3_zoneslist", command_key="副本", aliases={"副本列表"}, force_whitespace=True, priority=5)
+all_roles_teamcd_v1_matcher = on_command("jx3_zoneslist_v1", command_key="副本", aliases={"副本列表v1"}, force_whitespace=True, priority=5)
 
-@all_roles_teamcd_matcher.handle()
+@all_roles_teamcd_v1_matcher.handle()
+async def _(event: GroupMessageEvent, message: Message = CommandArg()):
+    msg = message.extract_plain_text().strip()
+    image = await get_personal_roles_teamcd_image_v1(event.user_id, msg)
+    await all_roles_teamcd_v1_matcher.finish(image)
+
+all_roles_teamcd_v2_matcher = on_command("jx3_zoneslist", command_key="副本", aliases={"副本列表v2", "副本列表"}, force_whitespace=True, priority=5)
+
+@all_roles_teamcd_v2_matcher.handle()
 async def _(event: GroupMessageEvent, message: Message = CommandArg()):
     if not Config.jx3.api.enable:
         return
     msg = message.extract_plain_text().strip()
-    image = await get_personal_roles_teamcd_image(event.user_id, msg)
-    await all_roles_teamcd_matcher.finish(image)
+    image = await get_personal_roles_teamcd_image_v2(event.user_id, msg)
+    await all_roles_teamcd_v2_matcher.finish(image)
 
 drops_list_matcher = on_command("jx3_drops", command_key="掉落", aliases={"掉落列表"}, force_whitespace=True, priority=5)
 
