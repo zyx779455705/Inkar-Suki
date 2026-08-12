@@ -22,6 +22,7 @@ from src.templates import HTMLSourceCode
 from .utils import get_date_timestamp
 from ._template import template_body, table_head
 from .command_statistics import render_command_statistics
+from .analyzer_statistics import render_analyzer_statistics
 
 
 COMMAND_STATISTICS_PERMISSION_NODE = "bot.statistics.command"
@@ -44,6 +45,26 @@ async def _(event: MessageEvent, args: Message = CommandArg()):
         )
     await command_statistics_matcher.finish(
         await render_command_statistics(args.extract_plain_text())
+    )
+
+
+analyzer_statistics_matcher = on_command(
+    "analyzer_statistics",
+    command_key=None,
+    aliases={"分析器统计"},
+    force_whitespace=True,
+    priority=5,
+)
+
+
+@analyzer_statistics_matcher.handle()
+async def _(event: MessageEvent, args: Message = CommandArg()):
+    if not check_permission(event.user_id, COMMAND_STATISTICS_PERMISSION_NODE):
+        await analyzer_statistics_matcher.finish(
+            denied(COMMAND_STATISTICS_PERMISSION_NODE)
+        )
+    await analyzer_statistics_matcher.finish(
+        await render_analyzer_statistics(args.extract_plain_text())
     )
 
 

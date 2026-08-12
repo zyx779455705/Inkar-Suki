@@ -220,6 +220,12 @@ class CommandUsage(LiteModel):
     timestamp: int = 0
 
 
+class AnalyzerUsage(LiteModel):
+    TABLE_NAME: ClassVar[str] = "analyzer_usage"
+    prefix: str = ""
+    timestamp: int = 0
+
+
 class RandomImageRecord(LiteModel):
     TABLE_NAME: ClassVar[str] = "random_image_record"
     user_id: int = 0

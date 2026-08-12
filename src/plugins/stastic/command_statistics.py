@@ -1,3 +1,5 @@
+import re
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from html import escape
 
@@ -11,7 +13,33 @@ from src.utils.generate import generate
 from ._template import (
     command_detail_head,
     command_statistics_css,
-    command_summary_head,
+)
+
+
+@dataclass(frozen=True)
+class UsageStatisticsConfig:
+    table_name: str
+    key_column: str
+    title: str
+    key_heading: str
+    key_noun: str
+    query_noun: str
+    action: str
+
+    def __post_init__(self) -> None:
+        for identifier in (self.table_name, self.key_column):
+            if re.fullmatch(r"[a-z_]+", identifier) is None:
+                raise ValueError(f"非法数据库标识符：{identifier}")
+
+
+COMMAND_STATISTICS_CONFIG = UsageStatisticsConfig(
+    table_name="command_usage",
+    key_column="command_key",
+    title="命令统计",
+    key_heading="命令",
+    key_noun="命令",
+    query_noun="统计命令",
+    action="调用",
 )
 
 
@@ -38,16 +66,28 @@ def _format_interval(seconds: int | None) -> str:
 
 
 def _available_command_keys() -> list[str]:
+    return _available_keys(COMMAND_STATISTICS_CONFIG, get_command_keys())
+
+
+def _available_keys(
+    config: UsageStatisticsConfig,
+    registered_keys: set[str],
+) -> list[str]:
     database_keys = {
         str(row[0])
         for row in logs_db.fetch_all(
-            "SELECT DISTINCT command_key FROM command_usage WHERE command_key != ''"
+            f"SELECT DISTINCT {config.key_column} FROM {config.table_name} "
+            f"WHERE {config.key_column} != ''"
         )
     }
-    return sorted(get_command_keys() | database_keys, key=str.casefold)
+    return sorted(registered_keys | database_keys, key=str.casefold)
 
 
 def _resolve_command_key(query: str, available_keys: list[str]) -> str | None:
+    return _resolve_key(query, available_keys)
+
+
+def _resolve_key(query: str, available_keys: list[str]) -> str | None:
     if query in available_keys:
         return query
     folded = [key for key in available_keys if key.casefold() == query.casefold()]
@@ -77,19 +117,34 @@ async def _render_image(
     )
 
 
-async def _render_overview(available_keys: list[str], now: datetime) -> MessageSegment:
+def _summary_head(key_heading: str, action: str) -> str:
+    return f"""
+<th class="stats-rank-column">排行</th>
+<th class="stats-key-column">{escape(key_heading)}</th>
+<th>总{escape(action)}</th>
+<th>今日</th>
+<th>近 7 日</th>
+<th class="stats-time-column">最近{escape(action)}</th>
+"""
+
+
+async def _render_overview(
+    config: UsageStatisticsConfig,
+    available_keys: list[str],
+    now: datetime,
+) -> MessageSegment:
     today_start = int(_day_start(now).timestamp())
     seven_day_start = int((_day_start(now) - timedelta(days=6)).timestamp())
     raw_rows = logs_db.fetch_all(
-        """
+        f"""
         SELECT
-            command_key,
+            {config.key_column},
             COUNT(*) AS total_count,
             SUM(CASE WHEN timestamp >= ? THEN 1 ELSE 0 END) AS today_count,
             SUM(CASE WHEN timestamp >= ? THEN 1 ELSE 0 END) AS seven_day_count,
             MAX(timestamp) AS last_timestamp
-        FROM command_usage
-        GROUP BY command_key
+        FROM {config.table_name}
+        GROUP BY {config.key_column}
         """,
         today_start,
         seven_day_start,
@@ -121,19 +176,20 @@ async def _render_overview(available_keys: list[str], now: datetime) -> MessageS
 
     if not table_rows:
         table_rows.append(
-            '<tr><td class="stats-message" colspan="6">暂无可统计的命令。</td></tr>'
+            f'<tr><td class="stats-message" colspan="6">暂无可统计的{config.key_noun}。</td></tr>'
         )
 
     total_calls = sum(row[1] for row in rows)
     return await _render_image(
-        application_name=f"命令统计 · {len(rows)} 个命令 · 累计 {total_calls} 次",
-        table_head=command_summary_head,
+        application_name=f"{config.title} · {len(rows)} 个{config.key_noun} · 累计 {total_calls} 次",
+        table_head=_summary_head(config.key_heading, config.action),
         table_body="\n".join(table_rows),
         footer=f"统计范围：功能启用以来 · 更新于 {now:%Y-%m-%d %H:%M:%S}",
     )
 
 
-async def _render_unknown_command(
+async def _render_unknown_key(
+    config: UsageStatisticsConfig,
     query: str,
     available_keys: list[str],
     now: datetime,
@@ -141,26 +197,30 @@ async def _render_unknown_command(
     examples = "、".join(escape(key) for key in available_keys[:12]) or "暂无"
     body = (
         '<tr><td class="stats-message">'
-        f"未找到统计命令：{escape(query)}<br>"
-        f"当前共有 {len(available_keys)} 个可统计命令。<br>"
+        f"未找到{config.query_noun}：{escape(query)}<br>"
+        f"当前共有 {len(available_keys)} 个可统计{config.key_noun}。<br>"
         f"示例：{examples}"
         "</td></tr>"
     )
     return await _render_image(
-        application_name="命令统计 · 未找到命令",
+        application_name=f"{config.title} · 未找到{config.key_noun}",
         table_head="<th>查询结果</th>",
         table_body=body,
         footer=f"更新于 {now:%Y-%m-%d %H:%M:%S}",
     )
 
 
-async def _render_detail(command_key: str, now: datetime) -> MessageSegment:
+async def _render_detail(
+    config: UsageStatisticsConfig,
+    key: str,
+    now: datetime,
+) -> MessageSegment:
     today = _day_start(now)
     today_start = int(today.timestamp())
     seven_day_start = int((today - timedelta(days=6)).timestamp())
     thirty_day_start = int((today - timedelta(days=29)).timestamp())
     aggregate = logs_db.fetch_all(
-        """
+        f"""
         SELECT
             COUNT(*) AS total_count,
             SUM(CASE WHEN timestamp >= ? THEN 1 ELSE 0 END) AS today_count,
@@ -168,13 +228,13 @@ async def _render_detail(command_key: str, now: datetime) -> MessageSegment:
             SUM(CASE WHEN timestamp >= ? THEN 1 ELSE 0 END) AS thirty_day_count,
             MIN(timestamp) AS first_timestamp,
             MAX(timestamp) AS last_timestamp
-        FROM command_usage
-        WHERE command_key = ?
+        FROM {config.table_name}
+        WHERE {config.key_column} = ?
         """,
         today_start,
         seven_day_start,
         thirty_day_start,
-        command_key,
+        key,
     )[0]
     total, today_count, seven_days, thirty_days, first, last = aggregate
     total = int(total or 0)
@@ -185,14 +245,14 @@ async def _render_detail(command_key: str, now: datetime) -> MessageSegment:
     last = int(last or 0)
 
     daily_rows = logs_db.fetch_all(
-        """
+        f"""
         SELECT date(timestamp, 'unixepoch', 'localtime') AS day, COUNT(*)
-        FROM command_usage
-        WHERE command_key = ? AND timestamp >= ?
+        FROM {config.table_name}
+        WHERE {config.key_column} = ? AND timestamp >= ?
         GROUP BY day
         ORDER BY day ASC
         """,
-        command_key,
+        key,
         thirty_day_start,
     )
     daily_counts = {str(day): int(count) for day, count in daily_rows}
@@ -205,27 +265,27 @@ async def _render_detail(command_key: str, now: datetime) -> MessageSegment:
     recent_timestamps = [
         int(row[0])
         for row in logs_db.fetch_all(
-            """
+            f"""
             SELECT timestamp
-            FROM command_usage
-            WHERE command_key = ?
+            FROM {config.table_name}
+            WHERE {config.key_column} = ?
             ORDER BY timestamp DESC, id DESC
             LIMIT 20
             """,
-            command_key,
+            key,
         )
     ]
 
-    escaped_key = escape(command_key)
+    escaped_key = escape(key)
     cards = (
         '<tr class="stats-card-row"><td colspan="4">'
         '<div class="stats-cards">'
-        f'<div class="stats-card"><div class="stats-card-label">总调用</div><div class="stats-card-value">{total}</div></div>'
+        f'<div class="stats-card"><div class="stats-card-label">总{config.action}</div><div class="stats-card-value">{total}</div></div>'
         f'<div class="stats-card"><div class="stats-card-label">今日</div><div class="stats-card-value">{today_count}</div></div>'
         f'<div class="stats-card"><div class="stats-card-label">近 7 日</div><div class="stats-card-value">{seven_days}</div></div>'
         f'<div class="stats-card"><div class="stats-card-label">近 30 日</div><div class="stats-card-value">{thirty_days}</div></div>'
         '</div>'
-        f'<div class="stats-meta">首次调用：{_format_timestamp(first)}　·　最近调用：{_format_timestamp(last)}</div>'
+        f'<div class="stats-meta">首次{config.action}：{_format_timestamp(first)}　·　最近{config.action}：{_format_timestamp(last)}</div>'
         '</td></tr>'
     )
 
@@ -254,7 +314,7 @@ async def _render_detail(command_key: str, now: datetime) -> MessageSegment:
             "</tr>"
         )
 
-    detail_rows.append('<tr class="stats-section"><td colspan="4">最近 20 次调用</td></tr>')
+    detail_rows.append(f'<tr class="stats-section"><td colspan="4">最近 20 次{config.action}</td></tr>')
     if recent_timestamps:
         for index, timestamp in enumerate(recent_timestamps, start=1):
             older = recent_timestamps[index] if index < len(recent_timestamps) else None
@@ -269,24 +329,36 @@ async def _render_detail(command_key: str, now: datetime) -> MessageSegment:
             )
     else:
         detail_rows.append(
-            '<tr><td class="stats-message" colspan="4">该命令尚无调用记录。</td></tr>'
+            f'<tr><td class="stats-message" colspan="4">该{config.key_noun}尚无{config.action}记录。</td></tr>'
         )
 
     return await _render_image(
-        application_name=f"命令统计 · {escaped_key} · 累计 {total} 次",
+        application_name=f"{config.title} · {escaped_key} · 累计 {total} 次",
         table_head=command_detail_head,
         table_body="\n".join(detail_rows),
-        footer=f"近 30 日趋势与最近 20 次调用 · 更新于 {now:%Y-%m-%d %H:%M:%S}",
+        footer=f"近 30 日趋势与最近 20 次{config.action} · 更新于 {now:%Y-%m-%d %H:%M:%S}",
     )
 
 
-async def render_command_statistics(command_query: str = "") -> MessageSegment:
+async def render_usage_statistics(
+    config: UsageStatisticsConfig,
+    registered_keys: set[str],
+    query_text: str = "",
+) -> MessageSegment:
     now = datetime.now()
-    available_keys = _available_command_keys()
-    query = command_query.strip()
+    available_keys = _available_keys(config, registered_keys)
+    query = query_text.strip()
     if not query:
-        return await _render_overview(available_keys, now)
-    command_key = _resolve_command_key(query, available_keys)
-    if command_key is None:
-        return await _render_unknown_command(query, available_keys, now)
-    return await _render_detail(command_key, now)
+        return await _render_overview(config, available_keys, now)
+    key = _resolve_key(query, available_keys)
+    if key is None:
+        return await _render_unknown_key(config, query, available_keys, now)
+    return await _render_detail(config, key, now)
+
+
+async def render_command_statistics(command_query: str = "") -> MessageSegment:
+    return await render_usage_statistics(
+        COMMAND_STATISTICS_CONFIG,
+        get_command_keys(),
+        command_query,
+    )

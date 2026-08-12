@@ -20,6 +20,7 @@ from src.utils.file import read, write
 from src.utils.database.player import search_player
 from src.utils.database.attributes import JX3PlayerAttribute
 from src.utils.permission import check_permission, denied
+from src.utils.analyzer_usage import record_analyzer_usage, register_analyzer_prefixes
 
 from src.plugins.notice import notice
 from src.plugins.jx3.calculator.compare import EquipInfo, get_equip_list
@@ -96,6 +97,25 @@ PUBLIC_LOOP_APPROVAL_CONFIG_PATH = build_path(DATA, ["jx3", "public_loop_approva
 PUBLIC_LOOP_APPROVE_PERMISSION_NODE = "jx3.calculator.public_loop.approve"
 PUBLIC_LOOP_CONFIG_PERMISSION_NODE = "jx3.calculator.public_loop.config"
 CALCULATOR_LOOP_RENAME_OTHER_PERMISSION_NODE = "jx3.calculator.loop.rename_other"
+JCL_ANALYZER_PREFIXES = (
+    "BLA-",
+    "TRD-",
+    "CQC-",
+    "FAL-",
+    "YXC-",
+    "ROD-",
+    "DPS-",
+    "CAL-",
+    "ASN-",
+    "THR-",
+    "THF-",
+    "LGZ-",
+    "LNN-",
+    "LNX-",
+    "QJD-",
+    "QJV-",
+)
+register_analyzer_prefixes(JCL_ANALYZER_PREFIXES)
 
 RD_ANALYSIS_SUPPORT_TEXT = (
     "当前 RD 分析支持通过上传群文件触发：\n"
@@ -3086,6 +3106,8 @@ async def _(bot: Bot, event: GroupUploadNoticeEvent):
         analyzer = QJHAnalyze
     else:
         return
+
+    record_analyzer_usage(event.file.name[:4])
     
     if analyzer is not None:
         anonymous_preference = Preference(event.user_id, "", "").setting("匿名分析")
