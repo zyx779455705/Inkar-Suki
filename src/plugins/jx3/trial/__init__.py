@@ -2,6 +2,7 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
 from nonebot.params import CommandArg
 
 from src.const.jx3.kungfu import Kungfu
+from src.const.jx3.school import School
 from src.const.jx3.server import Server
 from src.const.prompts import PROMPT
 from src.utils.command import on_command
@@ -22,19 +23,19 @@ async def _(event: GroupMessageEvent, msg: Message = CommandArg()):
         await trial_rank_matcher.finish(PROMPT.ArgumentCountInvalid)
     if len(args) == 1:
         server = Server(None, event.group_id).server
-        kungfu_name = args[0]
+        query_name = args[0]
     elif args[0] == "全服":
         server = ""
-        kungfu_name = args[1]
+        query_name = args[1]
     else:
         server = Server(args[0], event.group_id).server
-        kungfu_name = args[1]
-    kungfu_name = Kungfu(kungfu_name).name
-    if kungfu_name is None:
+        query_name = args[1]
+    school_name = School(query_name).name or Kungfu(query_name).school
+    if school_name is None:
         await trial_rank_matcher.finish(PROMPT.SchoolInvalid)
     if server is None:
         await trial_rank_matcher.finish(PROMPT.ServerNotExist)
-    await trial_rank_matcher.finish(await get_trial_rank(kungfu_name, server))
+    await trial_rank_matcher.finish(await get_trial_rank(school_name, server))
 
 
 trial_dps_matcher = on_command("jx3_trial_dps", command_key="秒伤", aliases={"试炼秒伤"}, priority=5, force_whitespace=True)
