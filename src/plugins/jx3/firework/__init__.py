@@ -8,7 +8,7 @@ from src.config import Config
 from src.const.jx3.server import Server
 from src.const.prompts import PROMPT
 from src.utils.command import on_command
-from src.utils.database.operation import get_group_settings
+from src.utils.permission import check_group_permission
 
 from .api import get_firework_record
 
@@ -16,8 +16,10 @@ firework_matcher = on_command("jx3_firework", command_key="烟花", aliases={"�
 
 @firework_matcher.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
-    additions = get_group_settings(str(event.group_id), "additions")
-    if not Config.jx3.api.enable or "Preview" not in additions:
+    if not (
+        Config.jx3.api.enable
+        and check_group_permission(event.group_id, "group.application.preview")
+    ):
         return
     if args.extract_plain_text() == "":
         return
