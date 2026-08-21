@@ -31,16 +31,16 @@ async def get_school_background(school: str) -> str:
         return image_path
 
 @overload
-async def get_attr_v2_remake(server: str, role_name: str, segment: Literal[True]) -> ms | str: ...
+async def get_attr_v2_remake(server: str, role_name: str, segment: Literal[True], group_id: int = 0) -> ms | str: ...
 
 @overload
-async def get_attr_v2_remake(server: str, role_name: str, segment: Literal[False]) -> bytes | str: ...
+async def get_attr_v2_remake(server: str, role_name: str, segment: Literal[False], group_id: int = 0) -> bytes | str: ...
 
-async def get_attr_v2_remake(server: str, role_name: str, segment: bool = True):
+async def get_attr_v2_remake(server: str, role_name: str, segment: bool = True, group_id: int = 0):
     role_info = await search_player(role_name=role_name, server_name=server)
     if not role_info.roleId:
         return PROMPT.EquipNotFound
-    await JX3PlayerAttribute.from_jx3api(role_info.serverName, role_info.roleName, True)
+    await JX3PlayerAttribute.from_jx3api(role_info.serverName, role_info.roleName, True, group_id)
     instance = await JX3PlayerAttribute.from_database(int(role_info.globalRoleId), all=False)
     if instance is None:
         return PROMPT.EquipNotFound

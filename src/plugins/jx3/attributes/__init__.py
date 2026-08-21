@@ -159,9 +159,9 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
         await attribute_matcher.finish(PROMPT.ServerNotExist)
     ver = Preference(event.user_id, "", "").setting("属性")
     if ver == "v4":
-        data = await get_attr_v4(server, role_name, tags)
+        data = await get_attr_v4(server, role_name, tags, group_id=event.group_id)
     else:
-        data = await get_attr_v2_remake(server, role_name, segment=True)
+        data = await get_attr_v2_remake(server, role_name, segment=True, group_id=event.group_id)
     await finish_attribute_response(attribute_matcher, data)
 
 attribute_v2remake_matcher = on_command("jx3_addritube_v2_remake", command_key="属性", aliases={"属性v2r", "查装v2r"}, force_whitespace=True, priority=5)
@@ -182,7 +182,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     server = Server(server, event.group_id).server
     if not server:
         await attribute_v2remake_matcher.finish(PROMPT.ServerNotExist)
-    data = await get_attr_v2_remake(server, role, segment=True)
+    data = await get_attr_v2_remake(server, role, segment=True, group_id=event.group_id)
     await finish_attribute_response(attribute_v2remake_matcher, data)
 
 attribute_v4_matcher = on_command("jx3_addritube_v4", command_key="属性", aliases={"属性v4", "查装v4"}, force_whitespace=True, priority=5)
@@ -214,7 +214,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     server = Server(server, event.group_id).server
     if not server:
         await attribute_v4_matcher.finish(PROMPT.ServerNotExist)
-    data = await get_attr_v4(server, role_name, tags)
+    data = await get_attr_v4(server, role_name, tags, group_id=event.group_id)
     await finish_attribute_response(attribute_v4_matcher, data)
 
 attribute_repo = on_command("jx3_attribute_repo", command_key="属性", aliases={"属性库"}, priority=5, force_whitespace=True)

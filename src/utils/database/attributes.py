@@ -1125,7 +1125,7 @@ class FinalAttr:
 
 class JX3PlayerAttribute:
     @classmethod
-    async def from_jx3api(cls, server: str, name: str, url_require: bool = False) -> str | None:
+    async def from_jx3api(cls, server: str, name: str, url_require: bool = False, group_id: int = 0) -> str | None:
         if not url_require:
             raw_data = {}
             raw_data["code"] = 404
@@ -1134,6 +1134,7 @@ class JX3PlayerAttribute:
             params = {
                 "server": server,
                 "name": name,
+                "group_id": group_id,
                 "format": "client"
             }
             try:
