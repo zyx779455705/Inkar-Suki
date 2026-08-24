@@ -194,16 +194,16 @@ HIDDEN_ATTRIBUTE_TEXTS = {
 ATTRIBUTE_INCOME_DISPLAY_KEYS = {
     "Physics": (
         "atPhysicsAttackPowerBase",
-        "atPhysicsCriticalStrike",
-        "atPhysicsCriticalDamagePowerBase",
+        "atAllTypeCriticalStrike",
+        "atAllTypeCriticalDamagePowerBase",
         "atPhysicsOvercomeBase",
         "atSurplusValueBase",
         "atStrainBase",
     ),
     "Magic": (
         "atMagicAttackPowerBase",
-        "atMagicCriticalStrike",
-        "atMagicCriticalDamagePowerBase",
+        "atAllTypeCriticalStrike",
+        "atAllTypeCriticalDamagePowerBase",
         "atMagicOvercome",
         "atSurplusValueBase",
         "atStrainBase",
@@ -480,10 +480,8 @@ def _prepare_trial_land_boss_rows(
 TRIAL_LAND_ATTRIBUTE_LABELS = {
     "atPhysicsAttackPowerBase": "外攻",
     "atMagicAttackPowerBase": "内攻",
-    "atPhysicsCriticalStrike": "会心",
-    "atMagicCriticalStrike": "会心",
-    "atPhysicsCriticalDamagePowerBase": "会效",
-    "atMagicCriticalDamagePowerBase": "会效",
+    "atAllTypeCriticalStrike": "会心",
+    "atAllTypeCriticalDamagePowerBase": "会效",
     "atPhysicsOvercomeBase": "破防",
     "atMagicOvercome": "破防",
     "atSurplusValueBase": "破招",
